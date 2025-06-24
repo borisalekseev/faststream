@@ -28,15 +28,15 @@ class Multiprocess(BaseReload):
     def startup(self) -> None:
         logger.info(f"Started parent process [{self.pid}]")
 
-        for _ in range(self.workers):
-            process = self._start_process()
-            logger.info(f"Started child process [{process.pid}]")
+        for worker_id in range(self.workers):
+            process = self._start_process(worker_id=worker_id)
+            logger.info(f"Started child process {worker_id} [{process.pid}]")
             self.processes.append(process)
 
     def shutdown(self) -> None:
-        for process in self.processes:
+        for worker_id, process in enumerate(self.processes):
             process.terminate()
-            logger.info(f"Stopping child process [{process.pid}]")
+            logger.info(f"Stopping child process {worker_id} [{process.pid}]")
             process.join()
 
         logger.info(f"Stopping parent process [{self.pid}]")
@@ -44,7 +44,7 @@ class Multiprocess(BaseReload):
     def restart(self) -> None:
         active_processes = []
 
-        for process in self.processes:
+        for worker_id, process in enumerate(self.processes):
             if process.is_alive():
                 active_processes.append(process)
                 continue
@@ -52,14 +52,14 @@ class Multiprocess(BaseReload):
             pid = process.pid
             exitcode = process.exitcode
 
-            log_msg = "Worker (pid:%s) exited with code %s."
+            log_msg = "Worker %s (pid:%s) exited with code %s."
             if exitcode and abs(exitcode) == signal.SIGKILL:
                 log_msg += " Perhaps out of memory?"
-            logger.error(log_msg, pid, exitcode)
+            logger.error(log_msg, worker_id, pid, exitcode)
 
             process.kill()
 
-            new_process = self._start_process()
+            new_process = self._start_process(worker_id=worker_id)
             logger.info(f"Started child process [{new_process.pid}]")
             active_processes.append(new_process)
 

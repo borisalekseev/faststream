@@ -1,3 +1,4 @@
+import copy
 import os
 import threading
 from multiprocessing.context import SpawnProcess
@@ -61,8 +62,13 @@ class BaseReload:
         self._process.terminate()
         self._process.join()
 
-    def _start_process(self) -> SpawnProcess:
-        process = get_subprocess(target=self._target, args=self._args)
+    def _start_process(self, worker_id: int | None = None) -> SpawnProcess:
+        if worker_id is not None:
+            args = copy.deepcopy(self._args)
+            args[1]["worker_id"] = worker_id
+        else:
+            args = self._args
+        process = get_subprocess(target=self._target, args=args)
         process.start()
         return process
 
