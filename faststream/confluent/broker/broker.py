@@ -2,7 +2,6 @@ import logging
 from collections.abc import Callable, Iterable, Sequence
 from typing import (
     TYPE_CHECKING,
-    Annotated,
     Literal,
     Optional,
     TypeVar,
@@ -11,7 +10,7 @@ from typing import (
 
 import anyio
 import confluent_kafka
-from typing_extensions import Doc, override
+from typing_extensions import override
 
 from faststream.__about__ import SERVICE_NAME
 from faststream._internal.broker import BrokerUsecase
