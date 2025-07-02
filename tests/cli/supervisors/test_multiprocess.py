@@ -1,13 +1,12 @@
 import os
 import signal
-
-import pytest
+import typing
 
 from faststream._internal.cli.supervisors.multiprocess import Multiprocess
 from tests.marks import skip_windows
 
 
-def exit(parent_id: int, *args) -> None:  # pragma: no cover
+def exit(parent_id: int, *args: typing.Any) -> None:  # pragma: no cover
     os.kill(parent_id, signal.SIGINT)
     raise SyntaxError
 
@@ -22,4 +21,4 @@ def test_base() -> None:
     for p in processor.processes:
         assert p.exitcode
         code = abs(p.exitcode)
-        assert code in {signal.SIGTERM.value, 0}
+        assert code == signal.SIGTERM.value
