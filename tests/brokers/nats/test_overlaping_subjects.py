@@ -1,46 +1,92 @@
-from typing import Final
-
 import pytest
 
-from faststream.nats.broker.broker import filter_overlapped_subjects
+from faststream.nats.schemas.js_stream import JStream
 
-TEST_CASES: Final = {
-    "single_subject": (["a"], {"a"}),
-    "duplicate_subject": (["a", "a"], {"a"}),
-    "duplicate_nested_subject": (["a.b", "a.b"], {"a.b"}),
-    "different_subjects": (["a", "b"], {"a", "b"}),
-    "different_nested_subjects": (["a.b", "b.b"], {"a.b", "b.b"}),
-    "nested_and_wildcard": (["a.b", "a.*"], {"a.*"}),
-    "deep_nested_and_wildcard": (["a.b.c", "a.*.c"], {"a.*.c"}),
+TEST_CASES = {
+    "single_subject": (
+        JStream("test", subjects=["a"]),
+        {"a"},
+    ),
+    "duplicate_subject": (
+        JStream("test", subjects=["a", "a"]),
+        {"a"},
+    ),
+    "duplicate_nested_subject": (
+        JStream("test", subjects=["a.b", "a.b"]),
+        {"a.b"},
+    ),
+    "different_subjects": (
+        JStream("test", subjects=["a", "b"]),
+        {"a", "b"},
+    ),
+    "different_nested_subjects": (
+        JStream("test", subjects=["a.b", "b.b"]),
+        {"a.b", "b.b"},
+    ),
+    "nested_and_wildcard": (
+        JStream("test", subjects=["a.b", "a.*"]),
+        {"a.*"},
+    ),
+    "deep_nested_and_wildcard": (
+        JStream("test", subjects=["a.b.c", "a.*.c"]),
+        {"a.*.c"},
+    ),
     "overlapping_wildcards_and_specific": (
-        ["*.b.c", "a.>", "a.b.c"],
+        JStream("test", subjects=["*.b.c", "a.>", "a.b.c"]),
         {"a.>", "*.b.c"},
     ),
-    "nested_wildcard_and_specific": (["a.b", "a.*", "a.b.c"], {"a.b.c", "a.*"}),
-    "wildcard_overlaps_specific": (["a.b", "a.>", "a.b.c"], {"a.>"}),
-    "wildcard_overlaps_wildcard": (["a.*", "a.>"], {"a.>"}),
-    "wildcard_overlaps_wildcard_reversed": (["a.>", "a.*"], {"a.>"}),
-    "wildcard_overlaps_wildcard_and_specific": (["a.*", "a.>", "a.b"], {"a.>"}),
-    "specific_wildcard_overlaps_wildcard": (["a.b", "a.*", "a.>"], {"a.>"}),
-    "deep_wildcard_overlaps_wildcard": (["a.*.*", "a.>"], {"a.>"}),
-    "wildcard_overlaps_deep_wildcards": (
-        [
-            "a.*.*",
-            "a.*.*.*",
-            "a.b.c",
-            "a.>",
-            "a.b.c.d",
-        ],
+    "nested_wildcard_and_specific": (
+        JStream("test", subjects=["a.b", "a.*", "a.b.c"]),
+        {"a.b.c", "a.*"},
+    ),
+    "wildcard_overlaps_specific": (
+        JStream("test", subjects=["a.b", "a.>", "a.b.c"]),
         {"a.>"},
     ),
-    "deep_wildcards": (["a.*.*", "a.*.*.*", "a.b.c", "a.b.c.d"], {"a.*.*.*", "a.*.*"}),
+    "wildcard_overlaps_wildcard": (
+        JStream("test", subjects=["a.*", "a.>"]),
+        {"a.>"},
+    ),
+    "wildcard_overlaps_wildcard_reversed": (
+        JStream("test", subjects=["a.>", "a.*"]),
+        {"a.>"},
+    ),
+    "wildcard_overlaps_wildcard_and_specific": (
+        JStream("test", subjects=["a.*", "a.>", "a.b"]),
+        {"a.>"},
+    ),
+    "specific_wildcard_overlaps_wildcard": (
+        JStream("test", subjects=["a.b", "a.*", "a.>"]),
+        {"a.>"},
+    ),
+    "deep_wildcard_overlaps_wildcard": (
+        JStream("test", subjects=["a.*.*", "a.>"]),
+        {"a.>"},
+    ),
+    "wildcard_overlaps_deep_wildcards": (
+        JStream(
+            "test",
+            subjects=[
+                "a.*.*",
+                "a.*.*.*",
+                "a.b.c",
+                "a.>",
+                "a.b.c.d",
+            ],
+        ),
+        {"a.>"},
+    ),
+    "deep_wildcards": (
+        JStream("test", subjects=["a.*.*", "a.*.*.*", "a.b.c", "a.b.c.d"]),
+        {"a.*.*.*", "a.*.*"},
+    ),
 }
 
 
 @pytest.mark.parametrize(
-    ("subjects", "expected"),
+    ("stream", "subjects"),
     TEST_CASES.values(),
     ids=TEST_CASES.keys(),
 )
-def test_filter_overlapped_subjects(subjects: list[str], expected: set[str]) -> None:
-    assert set(filter_overlapped_subjects(subjects)) == expected
+def test_filter_overlapped_subjects(stream: JStream, subjects: set[str]) -> None:
+    assert set(stream.subjects) == subjects
