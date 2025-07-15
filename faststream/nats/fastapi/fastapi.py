@@ -61,15 +61,7 @@ if TYPE_CHECKING:
     from faststream.nats.publisher.usecase import LogicPublisher
     from faststream.nats.schemas import JStream, KvWatch, ObjWatch, PullSub
     from faststream.nats.subscriber.usecases import (
-        BatchPullStreamSubscriber,
-        ConcurrentCoreSubscriber,
-        ConcurrentPullStreamSubscriber,
-        ConcurrentPushStreamSubscriber,
-        CoreSubscriber,
-        KeyValueWatchSubscriber,
-        ObjStoreWatchSubscriber,
-        PullStreamSubscriber,
-        PushStreamSubscriber,
+        LogicSubscriber,
     )
     from faststream.security import BaseSecurity
     from faststream.specification.base import SpecificationFactory
@@ -853,19 +845,9 @@ class NatsRouter(StreamRouter["Msg"]):
                 """,
             ),
         ] = False,
-    ) -> Union[
-        "BatchPullStreamSubscriber",
-        "ConcurrentCoreSubscriber",
-        "ConcurrentPullStreamSubscriber",
-        "ConcurrentPushStreamSubscriber",
-        "CoreSubscriber",
-        "KeyValueWatchSubscriber",
-        "ObjStoreWatchSubscriber",
-        "PullStreamSubscriber",
-        "PushStreamSubscriber",
-    ]:
+    ) -> "LogicSubscriber[Msg]":
         return cast(
-            "BatchPullStreamSubscriber | ConcurrentCoreSubscriber | ConcurrentPullStreamSubscriber | ConcurrentPushStreamSubscriber | CoreSubscriber | KeyValueWatchSubscriber | ObjStoreWatchSubscriber | PullStreamSubscriber | PushStreamSubscriber",
+            "LogicSubscriber[Msg]",
             super().subscriber(
                 subject=subject,
                 queue=queue,

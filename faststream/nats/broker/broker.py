@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Iterable, Sequence
+from itertools import zip_longest
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -559,7 +560,7 @@ class NatsBroker(
             try:
                 await stream_context.add_stream(
                     config=stream.config,
-                    subjects=stream.subjects,
+                    subjects=filter_overlapped_subjects(stream.subjects),
                 )
 
             except BadRequestError as e:  # noqa: PERF203
@@ -862,3 +863,44 @@ class NatsBroker(
                 await anyio.sleep(sleep_time)
 
         return False
+
+
+def is_covered(subject: str, pattern: str) -> bool:
+    subject_parts = subject.split(".")
+    pattern_parts = pattern.split(".")
+    total_parts = len(pattern_parts)
+
+    for i, (subject_part, pattern_part) in enumerate(
+        zip_longest(
+            subject_parts,
+            pattern_parts,
+            fillvalue=None,
+        )
+    ):
+        if pattern_part == "*":
+            if subject_part == ">":
+                return False
+            continue
+        if pattern_part == ">" and i == total_parts - 1:
+            return True
+        if subject_part != pattern_part:
+            return False
+
+    return len(subject_parts) == total_parts
+
+
+def filter_overlapped_subjects(subjects: Iterable[str]) -> list[str]:
+    filtered_subjects: list[str] = []
+    for subject in subjects:
+        need_to_add = True
+        for filtered_subject_position in range(len(filtered_subjects)):
+            if is_covered(subject, filtered_subjects[filtered_subject_position]):
+                need_to_add = False
+                break
+            if is_covered(filtered_subjects[filtered_subject_position], subject):
+                need_to_add = False
+                filtered_subjects[filtered_subject_position] = subject
+                continue
+        if need_to_add:
+            filtered_subjects.append(subject)
+    return filtered_subjects

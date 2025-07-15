@@ -6,6 +6,7 @@ from typing_extensions import overload, override
 from faststream._internal.endpoint.publisher import PublisherUsecase
 from faststream.message import gen_cor_id
 from faststream.nats.response import NatsPublishCommand
+from faststream.nats.schemas.js_stream import compile_nats_wildcard
 from faststream.response.publish_type import PublishType
 
 if TYPE_CHECKING:
@@ -39,6 +40,12 @@ class LogicPublisher(PublisherUsecase):
         self.timeout = config.timeout or 0.5
         self.headers = config.headers or {}
         self.reply_to = config.reply_to
+
+    @property
+    def clear_subject(self) -> str:
+        """Compile `test.{name}` to `test.*` subject."""
+        _, path = compile_nats_wildcard(self.subject)
+        return path
 
     @property
     def subject(self) -> str:

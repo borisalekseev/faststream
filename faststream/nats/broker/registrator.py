@@ -26,17 +26,7 @@ if TYPE_CHECKING:
     )
     from faststream.nats.message import NatsMessage
     from faststream.nats.publisher.usecase import LogicPublisher
-    from faststream.nats.subscriber.usecases import (
-        BatchPullStreamSubscriber,
-        ConcurrentCoreSubscriber,
-        ConcurrentPullStreamSubscriber,
-        ConcurrentPushStreamSubscriber,
-        CoreSubscriber,
-        KeyValueWatchSubscriber,
-        ObjStoreWatchSubscriber,
-        PullStreamSubscriber,
-        PushStreamSubscriber,
-    )
+    from faststream.nats.subscriber.usecases import LogicSubscriber
 
 
 class NatsRegistrator(Registrator[Msg, NatsBrokerConfig]):
@@ -212,17 +202,7 @@ class NatsRegistrator(Registrator[Msg, NatsBrokerConfig]):
             bool,
             Doc("Whetever to include operation in AsyncAPI schema or not."),
         ] = True,
-    ) -> Union[
-        "BatchPullStreamSubscriber",
-        "ConcurrentCoreSubscriber",
-        "ConcurrentPullStreamSubscriber",
-        "ConcurrentPushStreamSubscriber",
-        "CoreSubscriber",
-        "KeyValueWatchSubscriber",
-        "ObjStoreWatchSubscriber",
-        "PullStreamSubscriber",
-        "PushStreamSubscriber",
-    ]:
+    ) -> "LogicSubscriber[Msg]":
         """Creates NATS subscriber object.
 
         You can use it as a handler decorator `@broker.subscriber(...)`.

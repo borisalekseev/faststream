@@ -21,6 +21,7 @@ from .usecases import (
     ListBatchSubscriber,
     ListConcurrentSubscriber,
     ListSubscriber,
+    LogicSubscriber,
     StreamBatchSubscriber,
     StreamConcurrentSubscriber,
     StreamSubscriber,
@@ -29,16 +30,7 @@ from .usecases import (
 if TYPE_CHECKING:
     from faststream.redis.configs import RedisBrokerConfig
 
-SubsciberType: TypeAlias = (
-    ChannelSubscriber
-    | StreamBatchSubscriber
-    | StreamSubscriber
-    | ListBatchSubscriber
-    | ListSubscriber
-    | ChannelConcurrentSubscriber
-    | ListConcurrentSubscriber
-    | StreamConcurrentSubscriber
-)
+SubsciberType: TypeAlias = LogicSubscriber
 
 
 def create_subscriber(
