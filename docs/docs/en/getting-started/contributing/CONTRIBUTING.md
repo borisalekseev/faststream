@@ -171,6 +171,12 @@ Run docs:
 just docs-serve
 ```
 
+To run full version of the documentation (including API Reference) type the command:
+
+```bash
+just docs-serve --full
+```
+
 ## Commits
 
 Please, use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) to name your commits and PR's.

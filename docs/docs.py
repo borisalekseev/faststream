@@ -60,13 +60,13 @@ def preview() -> None:
 @app.command()
 def live(
     port: Annotated[str | None, typer.Argument()] = None,
-    fast: bool = False,
+    full: bool = False,
 ) -> None:
     """Start mkdocs preview with hotreload."""
-    if fast:
-        _build_fast()
-    else:
+    if full:
         _build()
+    else:
+        _build_fast()
 
     dev_server = f"0.0.0.0:{port}" if port else DEV_SERVER
 

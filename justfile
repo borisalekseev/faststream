@@ -72,9 +72,8 @@ docs-update-release-notes:
 
 [doc("Serve docs")]
 [group("docs")]
-docs-serve:
-  cd docs && uv run python docs.py live 8000 --fast
-
+docs-serve params="":
+  cd docs && uv run python docs.py live 8000 {{params}}
 
 # Linter
 [doc("Ruff format")]
@@ -88,7 +87,7 @@ ruff-check *params:
   uv run --active ruff check --exit-non-zero-on-fix {{params}}
 
 _codespell:
-  uv run --active codespell -L Dependant,dependant
+  uv run --active codespell -L Dependant,dependant --skip "./docs/site"
 
 [doc("Check typos")]
 [group("linter")]
