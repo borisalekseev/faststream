@@ -8,4 +8,4 @@ search:
   boost: 0.5
 ---
 
-::: faststream.nats.broker.broker.filter_overlapped_subjects
+::: faststream.specification.asyncapi.v2_6_0.generate.get_asgi_routes

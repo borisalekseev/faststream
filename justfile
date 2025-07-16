@@ -60,6 +60,16 @@ test-coverage-all path="tests/" params="" marks="all":
 docs-build:
   cd docs && uv run python docs.py build
 
+[doc("Build API Reference")]
+[group("docs")]
+docs-build-api:
+  cd docs && uv run python docs.py build-api-docs
+
+[doc("Update release notes")]
+[group("docs")]
+docs-update-release-notes:
+  cd docs && uv run python docs.py update-release-notes
+
 [doc("Serve docs")]
 [group("docs")]
 docs-serve:

@@ -12,7 +12,7 @@ import typer
 from create_api_docs import create_api_docs, remove_api_dir, render_navigation
 from mkdocs.config import load_config
 from typing_extensions import Annotated
-from update_releases import update_release_notes
+from update_releases import update_release_notes as _update_release_notes
 
 IGNORE_DIRS = ("assets", "stylesheets")
 
@@ -95,6 +95,13 @@ def build_api_docs() -> None:
 
 
 @app.command()
+def update_release_notes() -> None:
+    """Update release notes."""
+    typer.echo("Updating Release Notes")
+    _update_release_notes(realease_notes_path=EN_DOCS_DIR / "release.md")
+
+
+@app.command()
 def build_navigation() -> None:
     typer.echo("Updating Navigation with empty API")
     render_navigation("", "")
@@ -115,7 +122,7 @@ def _build() -> None:
     build_api_docs()
 
     typer.echo("Updating Release Notes")
-    update_release_notes(realease_notes_path=EN_DOCS_DIR / "release.md")
+    _update_release_notes(realease_notes_path=EN_DOCS_DIR / "release.md")
 
     subprocess.run(["mkdocs", "build", "--site-dir", BUILD_DIR], check=True)
 
