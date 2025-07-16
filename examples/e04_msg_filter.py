@@ -9,7 +9,7 @@ subscriber = broker.subscriber("test-queue")
 
 
 @subscriber(filter=lambda m: m.content_type == "application/json")
-async def handle_json(msg: str, logger: Logger) -> None:
+async def handle_json(msg: dict[str, str], logger: Logger) -> None:
     logger.info("JSON message: %s", msg)
 
 

@@ -153,10 +153,12 @@ kafka-logs:
 
 [doc("Run kafka tests")]
 [group("kafka")]
+[group("tests")]
 test-kafka: (test "tests/brokers/kafka")
 
 [doc("Run confluent tests")]
 [group("kafka")]
+[group("tests")]
 test-confluent: (test "tests/brokers/confluent")
 
 
@@ -178,6 +180,7 @@ rabbit-logs:
 
 [doc("Run rabbitmq tests")]
 [group("rabbitmq")]
+[group("tests")]
 test-rabbit: (test "tests/brokers/rabbit")
 
 
@@ -199,6 +202,7 @@ redis-logs:
 
 [doc("Run redis tests")]
 [group("redis")]
+[group("tests")]
 test-redis: (test "tests/brokers/redis")
 
 
@@ -220,4 +224,5 @@ nats-logs:
 
 [doc("Run nats tests")]
 [group("nats")]
-test-nats *params: (test "tests/brokers/nats")
+[group("tests")]
+test-nats: (test "tests/brokers/nats")
