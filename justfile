@@ -86,6 +86,7 @@ ruff-format *params:
 [group("linter")]
 ruff-check *params:
   uv run ruff check --exit-non-zero-on-fix {{params}}
+  uv run pre-commit run --all-files typos
 
 alias lint := linter
 
