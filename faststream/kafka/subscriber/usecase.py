@@ -338,7 +338,8 @@ class BatchSubscriber(LogicSubscriber[tuple["ConsumerRecord", ...]]):
         self.max_records = max_records
 
     async def get_msg(
-        self, consumer: "AIOKafkaConsumer"
+        self,
+        consumer: "AIOKafkaConsumer",
     ) -> tuple["ConsumerRecord", ...]:
         assert consumer, "You should setup subscriber at first."  # nosec B101
 

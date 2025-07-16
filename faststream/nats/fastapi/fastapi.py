@@ -643,7 +643,7 @@ class NatsRouter(StreamRouter["Msg"]):
         ] = None,
         obj_watch: Annotated[
             Union[bool, "ObjWatch"],
-            Doc("ObjecStore watch parameters container."),
+            Doc("ObjectStore watch parameters container."),
         ] = False,
         inbox_prefix: Annotated[
             bytes,
@@ -683,7 +683,7 @@ class NatsRouter(StreamRouter["Msg"]):
             Sequence["SubscriberMiddleware[NatsMessage]"],
             deprecated(
                 "This option was deprecated in 0.6.0. Use router-level middlewares instead."
-                "Scheduled to remove in 0.7.0"
+                "Scheduled to remove in 0.7.0",
             ),
             Doc("Subscriber middlewares to wrap incoming message processing."),
         ] = (),
@@ -696,7 +696,7 @@ class NatsRouter(StreamRouter["Msg"]):
             Doc("Whether to disable **FastStream** auto acknowledgement logic or not."),
             deprecated(
                 "This option was deprecated in 0.6.0 to prior to **ack_policy=AckPolicy.DO_NOTHING**. "
-                "Scheduled to remove in 0.7.0"
+                "Scheduled to remove in 0.7.0",
             ),
         ] = EMPTY,
         ack_policy: AckPolicy = EMPTY,
@@ -925,7 +925,7 @@ class NatsRouter(StreamRouter["Msg"]):
             Sequence["PublisherMiddleware"],
             deprecated(
                 "This option was deprecated in 0.6.0. Use router-level middlewares instead."
-                "Scheduled to remove in 0.7.0"
+                "Scheduled to remove in 0.7.0",
             ),
             Doc("Publisher middlewares to wrap outgoing messages."),
         ] = (),

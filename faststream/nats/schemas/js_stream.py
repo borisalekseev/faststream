@@ -52,7 +52,7 @@ class JStream(NameRequired):
             Optional["RetentionPolicy"],
             Doc(
                 "Retention policy for stream to use. Default is Limits, which will delete messages only in case of "
-                "resource depletion, if 'DiscardPolicy.OLD' used. In case of 'DisardPolicy.NEW', stream will answer "
+                "resource depletion, if 'DiscardPolicy.OLD' used. In case of 'DiscardPolicy.NEW', stream will answer "
                 "error for any write request. If 'RetentionPolicy.Interest' is used, message will be deleted as soon "
                 "as all active consumers will consume that message. Note: consumers should be bounded to stream! If "
                 "no consumers bound, all messages will be deleted, including new messages! If "
@@ -124,7 +124,7 @@ class JStream(NameRequired):
             bool,
             Doc(
                 "Should stream acknowledge writes or not. Without acks publisher can't determine, does message "
-                "received by stream or not."
+                "received by stream or not.",
             ),
         ] = False,
         template_owner: str | None = None,
@@ -251,7 +251,7 @@ def is_subject_match_wildcard(subject: str, pattern: str) -> bool:
             subject_parts,
             pattern_parts,
             fillvalue=None,
-        )
+        ),
     ):
         if pattern_part == "*":
             if subject_part == ">":

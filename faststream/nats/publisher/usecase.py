@@ -128,12 +128,16 @@ class LogicPublisher(PublisherUsecase):
             response = cast(
                 "PubAck",
                 await self._basic_publish(
-                    cmd, producer=self._outer_config.js_producer, _extra_middlewares=()
+                    cmd,
+                    producer=self._outer_config.js_producer,
+                    _extra_middlewares=(),
                 ),
             )
         else:
             response = await self._basic_publish(
-                cmd, producer=self._outer_config.producer, _extra_middlewares=()
+                cmd,
+                producer=self._outer_config.producer,
+                _extra_middlewares=(),
             )
 
         return response
@@ -162,7 +166,9 @@ class LogicPublisher(PublisherUsecase):
             producer = self._outer_config.producer
 
         await self._basic_publish(
-            cmd, producer=producer, _extra_middlewares=_extra_middlewares
+            cmd,
+            producer=producer,
+            _extra_middlewares=_extra_middlewares,
         )
 
     @override

@@ -1,5 +1,3 @@
-> **_NOTE:_**  This is an auto-generated file. Please edit docs/docs/en/getting-started/contributing/CONTRIBUTING.md instead.
-
 # Development
 
 After cloning the project, you'll need to set up the development environment. Here are the guidelines on how to do this.
@@ -121,33 +119,31 @@ Run all linters:
 ```bash
 just linter
 ```
-This command run ruff check, ruff format and codespell.
+This command run ruff check, ruff format.
 
 To use specific command
 ```bash
 just ruff-check
 # or
 just ruff-format
-# or
-just codespell
 ```
 
 ## Static analysis
 
-Run static analysis all tools:
+To run mypy, please use the following command.
 
-```bash
-just static-analysis
-```
-This command run mypy, bandit and semgrep.
-
-To use specific command
 ```bash
 just mypy
+```
+
+## Pre-commit
+
+Run pre-commit:
+
+```bash
+just pre-commit
 # or
-just bandit
-# or
-just semgrep
+just pre-commit-all
 ```
 
 ## Docs
@@ -162,12 +158,4 @@ Run docs:
 
 ```bash
 just docs-serve
-```
-
-## Pre-commit
-
-Run pre-commit:
-
-```bash
-just pre-commit
 ```

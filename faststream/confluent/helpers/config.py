@@ -366,7 +366,7 @@ class ConfluentFastConfig:
     def consumer_config(self) -> "AnyDict":
         consumer_config = _to_confluent(
             {_ConsumerConfig[k]: v for k, v in self.raw_consumer_config.items()}
-            | self.config
+            | self.config,
         )
 
         if "group.id" not in consumer_config:
@@ -378,13 +378,14 @@ class ConfluentFastConfig:
     def producer_config(self) -> "AnyDict":
         return _to_confluent(
             {_ProducerConfig[k]: v for k, v in self.raw_producer_config.items()}
-            | self.config
+            | self.config,
         )
 
     @property
     def admin_config(self) -> "AnyDict":
         return _to_confluent(
-            {_AdminConfig[k]: v for k, v in self.raw_admin_config.items()} | self.config
+            {_AdminConfig[k]: v for k, v in self.raw_admin_config.items()}
+            | self.config,
         )
 
 

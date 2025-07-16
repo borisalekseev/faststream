@@ -77,27 +77,21 @@ docs-serve:
 
 
 # Linter
-[doc("Ruff check")]
-[group("linter")]
-ruff-check *params:
-  uv run ruff check --exit-non-zero-on-fix {{params}}
-
 [doc("Ruff format")]
 [group("linter")]
 ruff-format *params:
   uv run ruff format {{params}}
 
-[doc("Codespell check")]
+[doc("Ruff check")]
 [group("linter")]
-codespell:
-  uv run codespell
+ruff-check *params:
+  uv run ruff check --exit-non-zero-on-fix {{params}}
 
 alias lint := linter
 
 [doc("Linter run")]
 [group("linter")]
-linter: ruff-format ruff-check codespell
-
+linter: ruff-format ruff-check
 
 # Static analysis
 [doc("Mypy check")]
@@ -113,12 +107,16 @@ bandit:
 [doc("Semgrep check")]
 [group("static analysis")]
 semgrep:
-  uv run semgrep scan --config auto --error
+  uv run semgrep scan --config auto --error --skip-unknown-extensions faststream
 
 [doc("Static analysis check")]
 [group("static analysis")]
 static-analysis: mypy bandit semgrep
 
+[doc("Install pre-commit hooks")]
+[group("pre-commit")]
+pre-commit-install:
+  uv run pre-commit install
 
 [doc("Pre-commit modified files")]
 [group("pre-commit")]
@@ -129,7 +127,6 @@ pre-commit:
 [group("pre-commit")]
 pre-commit-all:
   uv run pre-commit run --all-files
-
 
 # Kafka
 [doc("Run kafka container")]

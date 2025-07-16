@@ -98,7 +98,7 @@ def build_api_docs() -> None:
 def update_release_notes() -> None:
     """Update release notes."""
     typer.echo("Updating Release Notes")
-    _update_release_notes(realease_notes_path=EN_DOCS_DIR / "release.md")
+    _update_release_notes(release_notes_path=EN_DOCS_DIR / "release.md")
 
 
 @app.command()
@@ -122,7 +122,7 @@ def _build() -> None:
     build_api_docs()
 
     typer.echo("Updating Release Notes")
-    _update_release_notes(realease_notes_path=EN_DOCS_DIR / "release.md")
+    _update_release_notes(release_notes_path=EN_DOCS_DIR / "release.md")
 
     subprocess.run(["mkdocs", "build", "--site-dir", BUILD_DIR], check=True)
 

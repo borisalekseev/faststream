@@ -484,7 +484,7 @@ def _validate_input_for_misconfigure(  # noqa: PLR0915
     # JS PushSub
     elif durable is not None:
         warnings.warn(
-            message="The JetStream Push consumer with the `durable` option can't be scaled horizontally across multiple instances. You probably wanted to use the `queue` option instead. Also, we strongly recommend using the Jetstream PullSubsriber with the `durable` option as the default.",
+            message="The JetStream Push consumer with the `durable` option can't be scaled horizontally across multiple instances. You probably wanted to use the `queue` option instead. Also, we strongly recommend using the Jetstream PullSubscriber with the `durable` option as the default.",
             category=RuntimeWarning,
             stacklevel=4,
         )
