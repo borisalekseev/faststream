@@ -239,7 +239,7 @@ ConfluentConfig = TypedDict(
         "sasl.username": str,
         "sasl.password": str,
         "sasl.oauthbearer.config": str,
-        "enable.sasl.oauthbearer.unsecure.jwt": bool,
+        "enable.sasl.oauthbearer.unsecure.jwt": bool,  # codespell:ignore unsecure
         "oauth_cb": Callable[..., Any],
         "sasl.oauthbearer.client.id": str,
         "sasl.oauthbearer.client.secret": str,

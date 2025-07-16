@@ -80,19 +80,26 @@ docs-serve:
 [doc("Ruff format")]
 [group("linter")]
 ruff-format *params:
-  uv run ruff format {{params}}
+  uv run --active ruff format {{params}}
 
 [doc("Ruff check")]
 [group("linter")]
 ruff-check *params:
-  uv run ruff check --exit-non-zero-on-fix {{params}}
+  uv run --active ruff check --exit-non-zero-on-fix {{params}}
+
+_codespell:
+  uv run --active codespell -L Dependant,dependant
+
+[doc("Check typos")]
+[group("linter")]
+typos: _codespell
   uv run pre-commit run --all-files typos
 
 alias lint := linter
 
 [doc("Linter run")]
 [group("linter")]
-linter: ruff-format ruff-check
+linter: ruff-format ruff-check _codespell
 
 # Static analysis
 [doc("Mypy check")]
