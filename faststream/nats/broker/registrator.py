@@ -22,7 +22,6 @@ from faststream.nats.subscriber.factory import create_subscriber
 
 if TYPE_CHECKING:
     from fast_depends.dependencies import Dependant
-
     from faststream._internal.types import (
         BrokerMiddleware,
         CustomCallable,
