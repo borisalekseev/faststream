@@ -19,7 +19,7 @@ def test_no_ack() -> None:
         _no_ack=True,
     )
 
-    assert config.ack_policy is AckPolicy.DO_NOTHING
+    assert config.ack_policy is AckPolicy.MANUAL
 
 
 def test_ack_first() -> None:

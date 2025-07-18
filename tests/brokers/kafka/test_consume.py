@@ -321,7 +321,7 @@ class TestConsume(KafkaTestcaseConfig, BrokerRealConsumeTestcase):
         @consume_broker.subscriber(
             queue,
             group_id="test",
-            ack_policy=AckPolicy.DO_NOTHING,
+            ack_policy=AckPolicy.MANUAL,
         )
         async def handler(msg: KafkaMessage) -> None:
             event.set()
@@ -623,7 +623,7 @@ class TestListener(KafkaTestcaseConfig):
 
         consume_broker.subscriber(
             queue,
-            ack_policy=AckPolicy.DO_NOTHING,
+            ack_policy=AckPolicy.MANUAL,
             group_id="service_1",
             listener=CustomListener(),
         )
@@ -649,7 +649,7 @@ class TestListener(KafkaTestcaseConfig):
 
         consume_broker.subscriber(
             queue,
-            ack_policy=AckPolicy.DO_NOTHING,
+            ack_policy=AckPolicy.MANUAL,
             group_id="service_1",
             listener=CustomListener(),
         )

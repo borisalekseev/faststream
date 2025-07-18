@@ -7,7 +7,7 @@ from faststream.confluent.subscriber.config import KafkaSubscriberConfig
 def test_default() -> None:
     config = KafkaSubscriberConfig(_outer_config=MagicMock())
 
-    assert config.ack_policy is AckPolicy.DO_NOTHING
+    assert config.ack_policy is AckPolicy.MANUAL
     assert config.ack_first
     assert config.connection_data == {"enable_auto_commit": True}
 
@@ -18,7 +18,7 @@ def test_ack_first() -> None:
         _ack_policy=AckPolicy.ACK_FIRST,
     )
 
-    assert config.ack_policy is AckPolicy.DO_NOTHING
+    assert config.ack_policy is AckPolicy.MANUAL
     assert config.ack_first
     assert config.connection_data == {"enable_auto_commit": True}
 
@@ -40,7 +40,7 @@ def test_no_ack() -> None:
         _ack_policy=AckPolicy.ACK_FIRST,
     )
 
-    assert config.ack_policy is AckPolicy.DO_NOTHING
+    assert config.ack_policy is AckPolicy.MANUAL
     assert config.connection_data == {}
 
 
@@ -51,6 +51,6 @@ def test_auto_commit() -> None:
         _ack_policy=AckPolicy.ACK_FIRST,
     )
 
-    assert config.ack_policy is AckPolicy.DO_NOTHING
+    assert config.ack_policy is AckPolicy.MANUAL
     assert config.ack_first
     assert config.connection_data == {"enable_auto_commit": True}
