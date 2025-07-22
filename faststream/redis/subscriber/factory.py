@@ -1,10 +1,20 @@
 import warnings
+<<<<<<< HEAD
 from typing import TYPE_CHECKING, Any, TypeAlias, Union
+=======
+from typing import TYPE_CHECKING, Iterable, Optional, Sequence, Type, Union
+
+from typing_extensions import TypeAlias
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
 from faststream._internal.constants import EMPTY
 from faststream._internal.endpoint.subscriber.call_item import CallsCollection
 from faststream.exceptions import SetupError
+<<<<<<< HEAD
 from faststream.middlewares import AckPolicy
+=======
+from faststream.redis.parser import JSONMessageFormat
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 from faststream.redis.schemas import INCORRECT_SETUP_MSG, ListSub, PubSub, StreamSub
 from faststream.redis.schemas.proto import validate_options
 
@@ -30,7 +40,21 @@ from .usecases import (
 if TYPE_CHECKING:
     from faststream.redis.configs import RedisBrokerConfig
 
+<<<<<<< HEAD
 SubscriberType: TypeAlias = LogicSubscriber
+=======
+    from faststream.broker.types import BrokerMiddleware
+    from faststream.redis.message import UnifyRedisDict
+    from faststream.redis.parser import MessageFormat
+
+SubsciberType: TypeAlias = Union[
+    "AsyncAPIChannelSubscriber",
+    "AsyncAPIStreamBatchSubscriber",
+    "AsyncAPIStreamSubscriber",
+    "AsyncAPIListBatchSubscriber",
+    "AsyncAPIListSubscriber",
+]
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
 
 def create_subscriber(
@@ -39,9 +63,14 @@ def create_subscriber(
     list: Union["ListSub", str, None],
     stream: Union["StreamSub", str, None],
     # Subscriber args
+<<<<<<< HEAD
     ack_policy: "AckPolicy",
     no_ack: bool,
     config: "RedisBrokerConfig",
+=======
+    message_format: Type["MessageFormat"],
+    no_ack: bool = False,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
     no_reply: bool = False,
     # AsyncAPI args
     title_: str | None = None,
@@ -58,6 +87,7 @@ def create_subscriber(
         max_workers=max_workers,
     )
 
+<<<<<<< HEAD
     subscriber_config = RedisSubscriberConfig(
         channel_sub=PubSub.validate(channel),
         list_sub=ListSub.validate(list),
@@ -113,6 +143,94 @@ def create_subscriber(
                 specification,
                 calls,
                 max_workers=max_workers,
+=======
+    if message_format == JSONMessageFormat:
+        warnings.warn(
+            "JSONMessageFormat has been deprecated and will be removed in version 0.7.0 "
+            "Instead, use BinaryMessageFormatV1 when creating subscriber",
+            category=DeprecationWarning,
+            stacklevel=3,
+        )
+
+    if (channel_sub := PubSub.validate(channel)) is not None:
+        return AsyncAPIChannelSubscriber(
+            channel=channel_sub,
+            # basic args
+            message_format=message_format,
+            no_ack=no_ack,
+            no_reply=no_reply,
+            retry=retry,
+            broker_dependencies=broker_dependencies,
+            broker_middlewares=broker_middlewares,
+            # AsyncAPI args
+            title_=title_,
+            description_=description_,
+            include_in_schema=include_in_schema,
+        )
+
+    elif (stream_sub := StreamSub.validate(stream)) is not None:
+        if stream_sub.batch:
+            return AsyncAPIStreamBatchSubscriber(
+                stream=stream_sub,
+                # basic args
+                message_format=message_format,
+                no_ack=no_ack,
+                no_reply=no_reply,
+                retry=retry,
+                broker_dependencies=broker_dependencies,
+                broker_middlewares=broker_middlewares,
+                # AsyncAPI args
+                title_=title_,
+                description_=description_,
+                include_in_schema=include_in_schema,
+            )
+        else:
+            return AsyncAPIStreamSubscriber(
+                stream=stream_sub,
+                # basic args
+                message_format=message_format,
+                no_ack=no_ack,
+                no_reply=no_reply,
+                retry=retry,
+                broker_dependencies=broker_dependencies,
+                broker_middlewares=broker_middlewares,
+                # AsyncAPI args
+                title_=title_,
+                description_=description_,
+                include_in_schema=include_in_schema,
+            )
+
+    elif (list_sub := ListSub.validate(list)) is not None:
+        if list_sub.batch:
+            return AsyncAPIListBatchSubscriber(
+                list=list_sub,
+                # basic args
+                message_format=message_format,
+                no_ack=no_ack,
+                no_reply=no_reply,
+                retry=retry,
+                broker_dependencies=broker_dependencies,
+                broker_middlewares=broker_middlewares,
+                # AsyncAPI args
+                title_=title_,
+                description_=description_,
+                include_in_schema=include_in_schema,
+            )
+        else:
+            return AsyncAPIListSubscriber(
+                list=list_sub,
+                # basic args
+                message_format=message_format,
+                no_ack=no_ack,
+                no_reply=no_reply,
+                retry=retry,
+                broker_dependencies=broker_dependencies,
+                broker_middlewares=broker_middlewares,
+                # AsyncAPI args
+                title_=title_,
+                description_=description_,
+                include_in_schema=include_in_schema,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
             )
 
         return StreamSubscriber(subscriber_config, specification, calls)

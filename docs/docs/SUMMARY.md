@@ -123,6 +123,7 @@ search:
     - [Pipeline](redis/pipeline.md)
     - [Message Information](redis/message.md)
     - [Security Configuration](redis/security.md)
+	- [Message Format](redis/message_format.md)
 - [Reference - Code API](api/index.md)
 - [FastStream People](faststream-people.md)
 - Contributing

@@ -21,12 +21,21 @@ from redis.asyncio.connection import (
 from redis.exceptions import ConnectionError
 from typing_extensions import Doc, deprecated, overload, override
 
+<<<<<<< HEAD
 from faststream._internal.broker import BrokerUsecase
 from faststream._internal.constants import EMPTY
 from faststream._internal.di import FastDependsConfig
 from faststream.message import gen_cor_id
 from faststream.redis.configs import ConnectionState, RedisBrokerConfig
 from faststream.redis.message import UnifyRedisDict
+=======
+from faststream.__about__ import __version__
+from faststream.broker.message import gen_cor_id
+from faststream.exceptions import NOT_CONNECTED_YET
+from faststream.redis.broker.logging import RedisLoggingBroker
+from faststream.redis.broker.registrator import RedisRegistrator
+from faststream.redis.parser import JSONMessageFormat, MessageFormat
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 from faststream.redis.publisher.producer import RedisFastProducer
 from faststream.redis.response import RedisPublishCommand
 from faststream.redis.security import parse_security
@@ -134,10 +143,17 @@ class RedisBroker(
             Sequence["BrokerMiddleware[Any, Any]"],
             Doc("Middlewares to apply to all broker publishers/subscribers."),
         ] = (),
+<<<<<<< HEAD
         routers: Annotated[
             Sequence["Registrator[UnifyRedisDict]"],
             Doc("Routers to apply to broker."),
         ] = (),
+=======
+        message_format: Annotated[
+            Type["MessageFormat"],
+            Doc("What format to use when parsing messages"),
+        ] = JSONMessageFormat,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         # AsyncAPI args
         security: Annotated[
             Optional["BaseSecurity"],
@@ -181,8 +197,24 @@ class RedisBroker(
         ] = True,
         serializer: Optional["SerializerProto"] = EMPTY,
     ) -> None:
+<<<<<<< HEAD
         if specification_url is None:
             specification_url = url
+=======
+        self._producer = None
+
+        if message_format == JSONMessageFormat:
+            warnings.warn(
+                "JSONMessageFormat has been deprecated and will be removed in version 0.7. "
+                "Instead, use BinaryMessageFormatV1 when initializing broker",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+        self.message_format = message_format
+
+        if asyncapi_url is None:
+            asyncapi_url = url
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
         if protocol is None:
             url_kwargs = urlparse(specification_url)
@@ -259,8 +291,108 @@ class RedisBroker(
 
     async def stop(
         self,
+<<<<<<< HEAD
         exc_type: type[BaseException] | None = None,
         exc_val: BaseException | None = None,
+=======
+        url: Optional[str] = EMPTY,
+        **kwargs: "Unpack[RedisInitKwargs]",
+    ) -> "Redis[bytes]":
+        """Connect to the Redis server."""
+        if url is not EMPTY or kwargs:
+            warnings.warn(
+                "`RedisBroker().connect(...) options were "
+                "deprecated in **FastStream 0.5.40**. "
+                "Please, use `RedisBroker(...)` instead. "
+                "All these options will be removed in **FastStream 0.6.0**.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+        if url is not EMPTY:
+            connect_kwargs: AnyDict = {
+                "url": url,
+                **kwargs,
+            }
+        else:
+            connect_kwargs = dict(kwargs).copy()
+
+        return await super().connect(**connect_kwargs)
+
+    @override
+    async def _connect(  # type: ignore[override]
+        self,
+        url: str,
+        *,
+        host: str,
+        port: Union[str, int],
+        db: Union[str, int],
+        connection_class: Type["Connection"],
+        client_name: Optional[str],
+        health_check_interval: float,
+        max_connections: Optional[int],
+        socket_timeout: Optional[float],
+        socket_connect_timeout: Optional[float],
+        socket_read_size: int,
+        socket_keepalive: bool,
+        socket_keepalive_options: Optional[Mapping[int, Union[int, bytes]]],
+        socket_type: int,
+        retry_on_timeout: bool,
+        encoding: str,
+        encoding_errors: str,
+        decode_responses: bool,
+        parser_class: Type["BaseParser"],
+        encoder_class: Type["Encoder"],
+    ) -> "Redis[bytes]":
+        url_options: AnyDict = {
+            **dict(parse_url(url)),
+            **parse_security(self.security),
+            "client_name": client_name,
+            "health_check_interval": health_check_interval,
+            "max_connections": max_connections,
+            "socket_timeout": socket_timeout,
+            "socket_connect_timeout": socket_connect_timeout,
+            "socket_read_size": socket_read_size,
+            "socket_keepalive": socket_keepalive,
+            "socket_keepalive_options": socket_keepalive_options,
+            "socket_type": socket_type,
+            "retry_on_timeout": retry_on_timeout,
+            "encoding": encoding,
+            "encoding_errors": encoding_errors,
+            "decode_responses": decode_responses,
+            "parser_class": parser_class,
+            "encoder_class": encoder_class,
+        }
+
+        if port is not EMPTY:
+            url_options["port"] = port
+        if host is not EMPTY:
+            url_options["host"] = host
+        if db is not EMPTY:
+            url_options["db"] = db
+        if connection_class is not EMPTY:
+            url_options["connection_class"] = connection_class
+
+        pool = ConnectionPool(
+            **url_options,
+            lib_name="faststream",
+            lib_version=__version__,
+        )
+
+        client: Redis[bytes] = Redis.from_pool(pool)  # type: ignore[attr-defined]
+        self._producer = RedisFastProducer(
+            connection=client,
+            parser=self._parser,
+            decoder=self._decoder,
+            message_format=self.message_format,
+        )
+        return client
+
+    async def _close(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_val: Optional[BaseException] = None,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         exc_tb: Optional["TracebackType"] = None,
     ) -> None:
         await super().stop(exc_type, exc_val, exc_tb)
@@ -301,6 +433,7 @@ class RedisBroker(
         pipeline: Optional["Pipeline[bytes]"] = None,
     ) -> int: ...
 
+<<<<<<< HEAD
     @overload
     async def publish(
         self,
@@ -315,6 +448,22 @@ class RedisBroker(
         maxlen: int | None = None,
         pipeline: Optional["Pipeline[bytes]"] = None,
     ) -> bytes: ...
+=======
+    @property
+    def _subscriber_setup_extra(self) -> "AnyDict":
+        return {
+            **super()._subscriber_setup_extra,
+            "connection": self._connection,
+            "message_format": self.message_format,
+        }
+
+    @property
+    def _publisher_setup_extra(self) -> "AnyDict":
+        return {
+            **super()._publisher_setup_extra,
+            "message_format": self.message_format,
+        }
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
     @override
     async def publish(

@@ -3,6 +3,7 @@ from faststream._internal.testing.app import TestApp
 try:
     from .annotations import Pipeline, Redis, RedisMessage, RedisStreamMessage
     from .broker import RedisBroker, RedisPublisher, RedisRoute, RedisRouter
+    from .parser import BinaryMessageFormatV1, JSONMessageFormat
     from .response import RedisPublishCommand, RedisResponse
     from .schemas import ListSub, PubSub, StreamSub
     from .testing import TestRedisBroker
@@ -16,6 +17,8 @@ except ImportError as e:
     raise ImportError(INSTALL_FASTSTREAM_REDIS) from e
 
 __all__ = (
+    "BinaryMessageFormatV1",
+    "JSONMessageFormat",
     "ListSub",
     "Pipeline",
     "PubSub",

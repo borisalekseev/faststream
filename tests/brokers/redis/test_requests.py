@@ -1,8 +1,7 @@
-import json
-
 import pytest
 
 from faststream import BaseMiddleware
+from faststream.redis import JSONMessageFormat
 from tests.brokers.base.requests import RequestsTestcase
 
 from .basic import RedisMemoryTestcaseConfig, RedisTestcaseConfig
@@ -10,9 +9,14 @@ from .basic import RedisMemoryTestcaseConfig, RedisTestcaseConfig
 
 class Mid(BaseMiddleware):
     async def on_receive(self) -> None:
-        data = json.loads(self.msg["data"])
-        data["data"] *= 2
-        self.msg["data"] = json.dumps(data)
+        data, headers = JSONMessageFormat.parse(self.msg["data"])
+        data *= 2
+        self.msg["data"] = JSONMessageFormat.encode(
+            message=data,
+            reply_to=None,
+            correlation_id=headers["correlation_id"],
+            headers=headers,
+        )
 
     async def consume_scope(self, call_next, msg):
         msg.body *= 2

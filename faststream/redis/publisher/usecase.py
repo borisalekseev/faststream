@@ -1,9 +1,27 @@
 from abc import abstractmethod
+<<<<<<< HEAD
 from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any, Optional, Union
+=======
+from contextlib import AsyncExitStack
+from copy import deepcopy
+from functools import partial
+from itertools import chain
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Awaitable,
+    Callable,
+    Iterable,
+    Optional,
+    Sequence,
+    Type,
+)
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
 from typing_extensions import override
 
+<<<<<<< HEAD
 from faststream._internal.endpoint.publisher import (
     PublisherSpecification,
     PublisherUsecase,
@@ -11,10 +29,20 @@ from faststream._internal.endpoint.publisher import (
 from faststream.message import gen_cor_id
 from faststream.redis.response import RedisPublishCommand
 from faststream.response.publish_type import PublishType
+=======
+from faststream.broker.message import SourceType, gen_cor_id
+from faststream.broker.publisher.usecase import PublisherUsecase
+from faststream.exceptions import NOT_CONNECTED_YET
+from faststream.redis.message import UnifyRedisDict
+from faststream.redis.schemas import ListSub, PubSub, StreamSub
+from faststream.types import EMPTY
+from faststream.utils.functions import return_input
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
 if TYPE_CHECKING:
     from redis.asyncio.client import Pipeline
 
+<<<<<<< HEAD
     from faststream._internal.basic_types import AnyDict, SendableMessage
     from faststream._internal.types import PublisherMiddleware
     from faststream.redis.message import RedisMessage
@@ -22,6 +50,14 @@ if TYPE_CHECKING:
     from faststream.response import PublishCommand
 
     from .config import RedisPublisherConfig
+=======
+    from faststream.broker.publisher.proto import ProducerProto
+    from faststream.broker.types import BrokerMiddleware, PublisherMiddleware
+    from faststream.redis.message import RedisMessage
+    from faststream.redis.parser import MessageFormat
+    from faststream.redis.publisher.producer import RedisFastProducer
+    from faststream.types import AnyDict, AsyncFunc, SendableMessage
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
 
 class LogicPublisher(PublisherUsecase):
@@ -29,13 +65,49 @@ class LogicPublisher(PublisherUsecase):
 
     def __init__(
         self,
+<<<<<<< HEAD
         config: "RedisPublisherConfig",
         specification: "PublisherSpecification[Any, Any]",
+=======
+        *,
+        reply_to: str,
+        headers: Optional["AnyDict"],
+        # Publisher args
+        broker_middlewares: Sequence["BrokerMiddleware[UnifyRedisDict]"],
+        middlewares: Sequence["PublisherMiddleware"],
+        message_format: Type["MessageFormat"],
+        # AsyncAPI args
+        schema_: Optional[Any],
+        title_: Optional[str],
+        description_: Optional[str],
+        include_in_schema: bool,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
     ) -> None:
         super().__init__(config, specification)
 
+<<<<<<< HEAD
         self.reply_to = config.reply_to
         self.headers = config.headers or {}
+=======
+        self.message_format = message_format
+
+        self.reply_to = reply_to
+        self.headers = headers
+
+        self._producer = None
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
+
+    @override
+    def setup(  # type: ignore[override]
+        self,
+        *,
+        producer: Optional["ProducerProto"],
+        message_format: Type["MessageFormat"],
+    ) -> None:
+        super().setup(producer=producer)
+
+        if self.message_format is EMPTY:
+            self.message_format = message_format
 
     @abstractmethod
     def subscriber_property(self, *, name_only: bool) -> "AnyDict":
@@ -49,8 +121,34 @@ class ChannelPublisher(LogicPublisher):
         specification: "PublisherSpecification[Any, Any]",
         *,
         channel: "PubSub",
+<<<<<<< HEAD
     ) -> None:
         super().__init__(config, specification)
+=======
+        reply_to: str,
+        headers: Optional["AnyDict"],
+        # Regular publisher options
+        broker_middlewares: Sequence["BrokerMiddleware[UnifyRedisDict]"],
+        middlewares: Sequence["PublisherMiddleware"],
+        message_format: Type["MessageFormat"],
+        # AsyncAPI options
+        schema_: Optional[Any],
+        title_: Optional[str],
+        description_: Optional[str],
+        include_in_schema: bool,
+    ) -> None:
+        super().__init__(
+            reply_to=reply_to,
+            headers=headers,
+            broker_middlewares=broker_middlewares,
+            middlewares=middlewares,
+            message_format=message_format,
+            schema_=schema_,
+            title_=title_,
+            description_=description_,
+            include_in_schema=include_in_schema,
+        )
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
         self._channel = channel
 
@@ -85,6 +183,7 @@ class ChannelPublisher(LogicPublisher):
             correlation_id=correlation_id or gen_cor_id(),
             _publish_type=PublishType.PUBLISH,
             pipeline=pipeline,
+<<<<<<< HEAD
         )
         result: int = await self._basic_publish(
             cmd,
@@ -112,6 +211,17 @@ class ChannelPublisher(LogicPublisher):
             cmd,
             producer=self._outer_config.producer,
             _extra_middlewares=_extra_middlewares,
+=======
+            # basic args
+            reply_to=reply_to,
+            headers=headers,
+            correlation_id=correlation_id,
+            # RPC args
+            rpc=rpc,
+            rpc_timeout=rpc_timeout,
+            raise_timeout=raise_timeout,
+            message_format=self.message_format,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         )
 
     @override
@@ -126,11 +236,16 @@ class ChannelPublisher(LogicPublisher):
     ) -> "RedisMessage":
         cmd = RedisPublishCommand(
             message,
+<<<<<<< HEAD
             channel=channel or self.channel.name,
             headers=self.headers | (headers or {}),
             correlation_id=correlation_id or gen_cor_id(),
             _publish_type=PublishType.REQUEST,
             timeout=timeout,
+=======
+            **kwargs,
+            message_format=self.message_format,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         )
 
         msg: RedisMessage = await self._basic_request(
@@ -147,8 +262,34 @@ class ListPublisher(LogicPublisher):
         specification: "PublisherSpecification[Any, Any]",
         *,
         list: "ListSub",
+<<<<<<< HEAD
     ) -> None:
         super().__init__(config, specification)
+=======
+        reply_to: str,
+        headers: Optional["AnyDict"],
+        # Regular publisher options
+        broker_middlewares: Sequence["BrokerMiddleware[UnifyRedisDict]"],
+        middlewares: Sequence["PublisherMiddleware"],
+        message_format: Type["MessageFormat"],
+        # AsyncAPI options
+        schema_: Optional[Any],
+        title_: Optional[str],
+        description_: Optional[str],
+        include_in_schema: bool,
+    ) -> None:
+        super().__init__(
+            reply_to=reply_to,
+            headers=headers,
+            broker_middlewares=broker_middlewares,
+            middlewares=middlewares,
+            message_format=message_format,
+            schema_=schema_,
+            title_=title_,
+            description_=description_,
+            include_in_schema=include_in_schema,
+        )
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
         self._list = list
 
@@ -183,6 +324,7 @@ class ListPublisher(LogicPublisher):
             correlation_id=correlation_id or gen_cor_id(),
             _publish_type=PublishType.PUBLISH,
             pipeline=pipeline,
+<<<<<<< HEAD
         )
 
         result: int = await self._basic_publish(
@@ -211,6 +353,17 @@ class ListPublisher(LogicPublisher):
             cmd,
             producer=self._outer_config.producer,
             _extra_middlewares=_extra_middlewares,
+=======
+            # basic args
+            reply_to=reply_to,
+            headers=headers or self.headers,
+            correlation_id=correlation_id,
+            # RPC args
+            rpc=rpc,
+            rpc_timeout=rpc_timeout,
+            raise_timeout=raise_timeout,
+            message_format=self.message_format,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         )
 
     @override
@@ -225,11 +378,16 @@ class ListPublisher(LogicPublisher):
     ) -> "RedisMessage":
         cmd = RedisPublishCommand(
             message,
+<<<<<<< HEAD
             list=list or self.list.name,
             headers=self.headers | (headers or {}),
             correlation_id=correlation_id or gen_cor_id(),
             _publish_type=PublishType.REQUEST,
             timeout=timeout,
+=======
+            **kwargs,
+            message_format=self.message_format,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         )
 
         msg: RedisMessage = await self._basic_request(
@@ -258,6 +416,7 @@ class ListBatchPublisher(ListPublisher):
             correlation_id=correlation_id or gen_cor_id(),
             _publish_type=PublishType.PUBLISH,
             pipeline=pipeline,
+            message_format=self.message_format,
         )
 
         result: int = await self._basic_publish_batch(
@@ -296,9 +455,35 @@ class StreamPublisher(LogicPublisher):
         specification: "PublisherSpecification[Any, Any]",
         *,
         stream: "StreamSub",
+<<<<<<< HEAD
     ) -> None:
         super().__init__(config, specification)
         self._stream = stream
+=======
+        reply_to: str,
+        headers: Optional["AnyDict"],
+        # Regular publisher options
+        broker_middlewares: Sequence["BrokerMiddleware[UnifyRedisDict]"],
+        middlewares: Sequence["PublisherMiddleware"],
+        message_format: Type["MessageFormat"],
+        # AsyncAPI options
+        schema_: Optional[Any],
+        title_: Optional[str],
+        description_: Optional[str],
+        include_in_schema: bool,
+    ) -> None:
+        super().__init__(
+            reply_to=reply_to,
+            headers=headers,
+            broker_middlewares=broker_middlewares,
+            middlewares=middlewares,
+            message_format=message_format,
+            schema_=schema_,
+            title_=title_,
+            description_=description_,
+            include_in_schema=include_in_schema,
+        )
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
     @property
     def stream(self) -> "StreamSub":
@@ -333,6 +518,7 @@ class StreamPublisher(LogicPublisher):
             maxlen=maxlen or self.stream.maxlen,
             _publish_type=PublishType.PUBLISH,
             pipeline=pipeline,
+<<<<<<< HEAD
         )
 
         result: bytes = await self._basic_publish(
@@ -362,6 +548,17 @@ class StreamPublisher(LogicPublisher):
             cmd,
             producer=self._outer_config.producer,
             _extra_middlewares=_extra_middlewares,
+=======
+            # basic args
+            reply_to=reply_to,
+            headers=headers,
+            correlation_id=correlation_id,
+            # RPC args
+            rpc=rpc,
+            rpc_timeout=rpc_timeout,
+            raise_timeout=raise_timeout,
+            message_format=self.message_format,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         )
 
     @override
@@ -377,12 +574,17 @@ class StreamPublisher(LogicPublisher):
     ) -> "RedisMessage":
         cmd = RedisPublishCommand(
             message,
+<<<<<<< HEAD
             stream=stream or self.stream.name,
             headers=self.headers | (headers or {}),
             correlation_id=correlation_id or gen_cor_id(),
             _publish_type=PublishType.REQUEST,
             maxlen=maxlen or self.stream.maxlen,
             timeout=timeout,
+=======
+            **kwargs,
+            message_format=self.message_format,
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         )
 
         msg: RedisMessage = await self._basic_request(

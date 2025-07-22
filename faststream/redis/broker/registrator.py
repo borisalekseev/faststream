@@ -1,5 +1,19 @@
+<<<<<<< HEAD
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Annotated, Any, Optional, Union, cast
+=======
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Optional,
+    Sequence,
+    Type,
+    Union,
+    cast,
+)
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
 from typing_extensions import Doc, deprecated, override
 
@@ -9,8 +23,15 @@ from faststream.exceptions import SetupError
 from faststream.middlewares import AckPolicy
 from faststream.redis.configs import RedisBrokerConfig
 from faststream.redis.message import UnifyRedisDict
+<<<<<<< HEAD
 from faststream.redis.publisher.factory import PublisherType, create_publisher
 from faststream.redis.subscriber.factory import SubscriberType, create_subscriber
+=======
+from faststream.redis.publisher.asyncapi import AsyncAPIPublisher
+from faststream.redis.subscriber.asyncapi import AsyncAPISubscriber
+from faststream.redis.subscriber.factory import SubsciberType, create_subscriber
+from faststream.types import EMPTY
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 
 if TYPE_CHECKING:
     from fast_depends.dependencies import Dependant
@@ -22,6 +43,12 @@ if TYPE_CHECKING:
         PublisherMiddleware,
         SubscriberMiddleware,
     )
+<<<<<<< HEAD
+=======
+    from faststream.redis.message import UnifyRedisMessage
+    from faststream.redis.parser import MessageFormat
+    from faststream.redis.publisher.asyncapi import PublisherType
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
     from faststream.redis.schemas import ListSub, PubSub, StreamSub
 
 
@@ -82,6 +109,10 @@ class RedisRegistrator(Registrator[UnifyRedisDict, RedisBrokerConfig]):
                 "Whether to disable **FastStream** RPC and Reply To auto responses or not.",
             ),
         ] = False,
+        message_format: Annotated[
+            Type["MessageFormat"],
+            Doc("What format to use when parsing messages"),
+        ] = EMPTY,
         # AsyncAPI information
         title: Annotated[
             str | None,
@@ -98,6 +129,7 @@ class RedisRegistrator(Registrator[UnifyRedisDict, RedisBrokerConfig]):
             bool,
             Doc("Whetever to include operation in AsyncAPI schema or not."),
         ] = True,
+<<<<<<< HEAD
         max_workers: Annotated[
             int,
             Doc("Number of workers to process messages concurrently."),
@@ -117,6 +149,29 @@ class RedisRegistrator(Registrator[UnifyRedisDict, RedisBrokerConfig]):
             title_=title,
             description_=description,
             include_in_schema=include_in_schema,
+=======
+    ) -> AsyncAPISubscriber:
+        subscriber = cast(
+            "AsyncAPISubscriber",
+            super().subscriber(
+                create_subscriber(
+                    channel=channel,
+                    list=list,
+                    stream=stream,
+                    # subscriber args
+                    message_format=message_format,
+                    no_ack=no_ack,
+                    no_reply=no_reply,
+                    retry=retry,
+                    broker_middlewares=self._middlewares,
+                    broker_dependencies=self._dependencies,
+                    # AsyncAPI
+                    title_=title,
+                    description_=description,
+                    include_in_schema=self._solve_include_in_schema(include_in_schema),
+                )
+            ),
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         )
 
         super().subscriber(subscriber)
@@ -163,6 +218,10 @@ class RedisRegistrator(Registrator[UnifyRedisDict, RedisBrokerConfig]):
             ),
             Doc("Publisher middlewares to wrap outgoing messages."),
         ] = (),
+        message_format: Annotated[
+            Type["MessageFormat"],
+            Doc("What format to use when parsing messages"),
+        ] = EMPTY,
         # AsyncAPI information
         title: Annotated[
             str | None,
@@ -191,6 +250,7 @@ class RedisRegistrator(Registrator[UnifyRedisDict, RedisBrokerConfig]):
 
         Or you can create a publisher object to call it lately - `broker.publisher(...).publish(...)`.
         """
+<<<<<<< HEAD
         publisher = create_publisher(
             channel=channel,
             list=list,
@@ -205,6 +265,28 @@ class RedisRegistrator(Registrator[UnifyRedisDict, RedisBrokerConfig]):
             description_=description,
             schema_=schema,
             include_in_schema=include_in_schema,
+=======
+        return cast(
+            "AsyncAPIPublisher",
+            super().publisher(
+                AsyncAPIPublisher.create(
+                    channel=channel,
+                    list=list,
+                    stream=stream,
+                    headers=headers,
+                    reply_to=reply_to,
+                    message_format=message_format,
+                    # Specific
+                    broker_middlewares=self._middlewares,
+                    middlewares=middlewares,
+                    # AsyncAPI
+                    title_=title,
+                    description_=description,
+                    schema_=schema,
+                    include_in_schema=self._solve_include_in_schema(include_in_schema),
+                )
+            ),
+>>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         )
         super().publisher(publisher)
         return publisher
