@@ -1,7 +1,8 @@
 from faststream._internal.testing.app import TestApp
 
 try:
-    from aiokafka import ConsumerRecord, RecordMetadata, TopicPartition
+    from aiokafka import ConsumerRecord, TopicPartition
+    from aiokafka.structs import RecordMetadata
 
     from .annotations import KafkaMessage
     from .broker import KafkaBroker, KafkaPublisher, KafkaRoute, KafkaRouter
