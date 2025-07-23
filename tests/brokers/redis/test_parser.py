@@ -1,37 +1,28 @@
 import asyncio
-from typing import Type
 from unittest.mock import MagicMock
 
 import pytest
 
-<<<<<<< HEAD
-=======
-from faststream._compat import json_dumps
+from faststream._internal._compat import json_dumps
 from faststream.redis import RedisBroker, TestRedisBroker
 from faststream.redis.parser import (
     BinaryMessageFormatV1,
     JSONMessageFormat,
     MessageFormat,
 )
->>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
 from tests.brokers.base.parser import CustomParserTestcase
 
 from .basic import RedisTestcaseConfig
 
-<<<<<<< HEAD
 
 @pytest.mark.redis()
 class TestCustomParser(RedisTestcaseConfig, CustomParserTestcase):
     pass
-=======
-@pytest.mark.redis
-class TestCustomParser(CustomParserTestcase):
-    broker_class = RedisBroker
 
 
 @pytest.mark.parametrize(
     ("input", "should_be"),
-    [
+    (
         ("", b""),
         ("plain text", b"plain text"),
         (
@@ -43,7 +34,7 @@ class TestCustomParser(CustomParserTestcase):
             b"\x82\xa2id\xd9",
             b"\x82\xa2id\xd9",
         ),
-    ],
+    ),
 )
 def test_binary_message_encode_parse(input, should_be) -> None:
     raw_message = BinaryMessageFormatV1.encode(
@@ -55,14 +46,14 @@ def test_binary_message_encode_parse(input, should_be) -> None:
 
 @pytest.mark.parametrize(
     ("input", "should_be"),
-    [
+    (
         ("", b""),
         ("plain text", b"plain text"),
         (
             {"id": "12345678" * 4, "date": "2021-01-01T00:00:00Z"},
             json_dumps({"id": "12345678" * 4, "date": "2021-01-01T00:00:00Z"}),
         ),
-    ],
+    ),
 )
 def test_json_message_encode_parse(input, should_be) -> None:
     raw_message = JSONMessageFormat.encode(
@@ -85,25 +76,25 @@ def test_parse_json_with_binary_format() -> None:
     assert parsed_data == data_should_be
 
 
-@pytest.mark.redis
-@pytest.mark.asyncio
+@pytest.mark.redis()
+@pytest.mark.asyncio()
 class TestFormats:
     @pytest.mark.parametrize(
         ("message_format", "message"),
-        [
-            (JSONMessageFormat, b'{"data":"hello"}'),
+        (
+            (JSONMessageFormat, b'{"data": "hello"}'),
             (
                 BinaryMessageFormatV1,
                 b"\x89BIN\x0d\x0a\x1a\x0a\x00\x01\x00\00\x00\x12\x00\x00\x00\x14\x00\x00hello",
             ),
-        ],
+        ),
     )
     async def test_consume_in_different_formats(
         self,
         queue: str,
         event: asyncio.Event,
         mock: MagicMock,
-        message_format: Type[MessageFormat],
+        message_format: type[MessageFormat],
         message: bytes,
     ) -> None:
         broker = RedisBroker(apply_types=False, message_format=JSONMessageFormat)
@@ -127,20 +118,20 @@ class TestFormats:
 
     @pytest.mark.parametrize(
         ("message_format", "message"),
-        [
-            (JSONMessageFormat, b'{"data":"hello"}'),
+        (
+            (JSONMessageFormat, b'{"data": "hello"}'),
             (
                 BinaryMessageFormatV1,
                 b"\x89BIN\x0d\x0a\x1a\x0a\x00\x01\x00\00\x00\x12\x00\x00\x00\x14\x00\x00hello",
             ),
-        ],
+        ),
     )
     async def test_publish_in_different_formats(
         self,
         queue: str,
         event: asyncio.Event,
         mock: MagicMock,
-        message_format: Type[MessageFormat],
+        message_format: type[MessageFormat],
         message: bytes,
     ) -> None:
         broker = RedisBroker(apply_types=False, message_format=message_format)
@@ -228,10 +219,10 @@ class TestFormats:
         mock.assert_called_once_with(b"hello world")
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 class TestTestBrokerFormats:
-    @pytest.mark.parametrize(("msg_format"), [JSONMessageFormat, BinaryMessageFormatV1])
-    async def test_formats(self, queue: str, msg_format: Type["MessageFormat"]) -> None:
+    @pytest.mark.parametrize(("msg_format"), (JSONMessageFormat, BinaryMessageFormatV1))
+    async def test_formats(self, queue: str, msg_format: type["MessageFormat"]) -> None:
         broker = RedisBroker(apply_types=False, message_format=msg_format)
 
         @broker.subscriber(queue, message_format=msg_format)
@@ -253,4 +244,3 @@ class TestTestBrokerFormats:
         async with TestRedisBroker(broker) as br:
             await br.publish("hello", queue)
             handler.mock.assert_called_once_with("hello")
->>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2

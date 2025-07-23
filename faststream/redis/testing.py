@@ -6,12 +6,6 @@ from typing import (
     Any,
     Optional,
     Protocol,
-<<<<<<< HEAD
-=======
-    Sequence,
-    Tuple,
-    Type,
->>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
     Union,
     cast,
 )
@@ -96,10 +90,6 @@ class TestRedisBroker(TestBroker[RedisBroker]):
         *args: Any,
         **kwargs: Any,
     ) -> AsyncMock:
-<<<<<<< HEAD
-=======
-        broker._producer = FakeProducer(broker, broker.message_format)
->>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
         connection = MagicMock()
 
         pub_sub = AsyncMock()
@@ -116,13 +106,10 @@ class TestRedisBroker(TestBroker[RedisBroker]):
 
 
 class FakeProducer(RedisFastProducer):
-    def __init__(
-        self, broker: RedisBroker, message_format: Type["MessageFormat"]
-    ) -> None:
+    def __init__(self, broker: RedisBroker) -> None:
         self.broker = broker
-        self.message_format = message_format
 
-        default = RedisPubSubParser(message_format=message_format)
+        default = RedisPubSubParser(broker.config)
         self._parser = resolve_custom_func(
             broker._parser,
             default.parse_message,
@@ -133,7 +120,6 @@ class FakeProducer(RedisFastProducer):
         )
 
     @override
-<<<<<<< HEAD
     async def publish(self, cmd: "RedisPublishCommand") -> int | bytes:
         body = build_message(
             message=cmd.body,
@@ -141,36 +127,7 @@ class FakeProducer(RedisFastProducer):
             correlation_id=cmd.correlation_id or gen_cor_id(),
             headers=cmd.headers,
             serializer=self.broker.config.fd_config._serializer,
-=======
-    async def publish(
-        self,
-        message: "SendableMessage",
-        *,
-        channel: Optional[str] = None,
-        list: Optional[str] = None,
-        stream: Optional[str] = None,
-        maxlen: Optional[int] = None,
-        headers: Optional["AnyDict"] = None,
-        reply_to: str = "",
-        correlation_id: Optional[str] = None,
-        rpc: bool = False,
-        rpc_timeout: Optional[float] = 30.0,
-        raise_timeout: bool = False,
-        pipeline: Optional["Pipeline[bytes]"] = None,
-        message_format: Optional[Type["MessageFormat"]] = None,
-    ) -> Optional[Any]:
-        if rpc and reply_to:
-            raise WRONG_PUBLISH_ARGS
-
-        correlation_id = correlation_id or gen_cor_id()
-
-        body = build_message(
-            message=message,
-            message_format=(message_format or self.message_format),
-            reply_to=reply_to,
-            correlation_id=correlation_id,
-            headers=headers,
->>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
+            message_format=cmd.message_format,
         )
 
         destination = _make_destination_kwargs(cmd)
@@ -191,34 +148,12 @@ class FakeProducer(RedisFastProducer):
         return 0
 
     @override
-<<<<<<< HEAD
     async def request(self, cmd: "RedisPublishCommand") -> "PubSubMessage":
         body = build_message(
             message=cmd.body,
             correlation_id=cmd.correlation_id or gen_cor_id(),
             headers=cmd.headers,
-=======
-    async def request(  # type: ignore[override]
-        self,
-        message: "SendableMessage",
-        *,
-        correlation_id: str,
-        channel: Optional[str] = None,
-        list: Optional[str] = None,
-        stream: Optional[str] = None,
-        maxlen: Optional[int] = None,
-        headers: Optional["AnyDict"] = None,
-        timeout: Optional[float] = 30.0,
-        message_format: Optional[Type["MessageFormat"]] = None,
-    ) -> "PubSubMessage":
-        correlation_id = correlation_id or gen_cor_id()
-
-        body = build_message(
-            message=message,
-            message_format=(message_format or self.message_format),
-            correlation_id=correlation_id,
-            headers=headers,
->>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
+            message_format=cmd.message_format,
         )
 
         destination = _make_destination_kwargs(cmd)
@@ -239,7 +174,6 @@ class FakeProducer(RedisFastProducer):
 
         raise SubscriberNotFound
 
-<<<<<<< HEAD
     @override
     async def publish_batch(self, cmd: "RedisPublishCommand") -> int:
         data_to_send = [
@@ -247,23 +181,7 @@ class FakeProducer(RedisFastProducer):
                 m,
                 correlation_id=cmd.correlation_id or gen_cor_id(),
                 headers=cmd.headers,
-=======
-    async def publish_batch(
-        self,
-        *msgs: "SendableMessage",
-        list: str,
-        headers: Optional["AnyDict"] = None,
-        correlation_id: Optional[str] = None,
-        pipeline: Optional["Pipeline[bytes]"] = None,
-        message_format: Optional[Type["MessageFormat"]] = None,
-    ) -> None:
-        data_to_send = [
-            build_message(
-                m,
-                message_format=(message_format or self.message_format),
-                correlation_id=correlation_id or gen_cor_id(),
-                headers=headers,
->>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
+                message_format=cmd.message_format,
             )
             for m in cmd.batch_bodies
         ]
@@ -296,10 +214,10 @@ class FakeProducer(RedisFastProducer):
             type="message",
             data=build_message(
                 message=result.body,
-                message_format=self.message_format,
                 headers=result.headers,
                 correlation_id=result.correlation_id or "",
                 serializer=self.broker.config.fd_config._serializer,
+                message_format=handler.config.message_format,
             ),
             channel="",
             pattern=None,
@@ -310,16 +228,12 @@ def build_message(
     message: Union[Sequence["SendableMessage"], "SendableMessage"],
     *,
     correlation_id: str,
-    message_format: Type["MessageFormat"],
+    message_format: type["MessageFormat"],
     reply_to: str = "",
     headers: Optional["AnyDict"] = None,
     serializer: Optional["SerializerProto"] = None,
 ) -> bytes:
-<<<<<<< HEAD
-    return RawMessage.encode(
-=======
-    data = message_format.encode(
->>>>>>> df6e51cc238d7ff01b2867aea52ed97faf3ac6f2
+    return message_format.encode(
         message=message,
         reply_to=reply_to,
         headers=headers,

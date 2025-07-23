@@ -257,7 +257,7 @@ class StreamSubscriber(_StreamHandlerMixin):
         specification: "SubscriberSpecification[Any, Any]",
         calls: "CallsCollection[Any]",
     ) -> None:
-        parser = RedisStreamParser()
+        parser = RedisStreamParser(config)
         config.decoder = parser.decode_message
         config.parser = parser.parse_message
         super().__init__(config, specification, calls)
@@ -305,7 +305,7 @@ class StreamBatchSubscriber(_StreamHandlerMixin):
         specification: "SubscriberSpecification[Any, Any]",
         calls: "CallsCollection[Any]",
     ) -> None:
-        parser = RedisBatchStreamParser()
+        parser = RedisBatchStreamParser(config)
         config.decoder = parser.decode_message
         config.parser = parser.parse_message
         super().__init__(config, specification, calls)

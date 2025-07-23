@@ -163,7 +163,7 @@ class ListSubscriber(_ListHandlerMixin):
         specification: "RedisSubscriberSpecification",
         calls: "CallsCollection[Any]",
     ) -> None:
-        parser = RedisListParser()
+        parser = RedisListParser(config)
         config.parser = parser.parse_message
         config.decoder = parser.decode_message
         super().__init__(config, specification, calls)
@@ -193,7 +193,7 @@ class ListBatchSubscriber(_ListHandlerMixin):
         specification: "RedisSubscriberSpecification",
         calls: "CallsCollection[Any]",
     ) -> None:
-        parser = RedisBatchListParser()
+        parser = RedisBatchListParser(config)
         config.parser = parser.parse_message
         config.decoder = parser.decode_message
         super().__init__(config, specification, calls)

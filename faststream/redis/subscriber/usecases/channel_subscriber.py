@@ -41,7 +41,7 @@ class ChannelSubscriber(LogicSubscriber):
         calls: "CallsCollection[Any]",
     ) -> None:
         assert config.channel_sub
-        parser = RedisPubSubParser(pattern=config.channel_sub.path_regex)
+        parser = RedisPubSubParser(config, pattern=config.channel_sub.path_regex)
         config.decoder = parser.decode_message
         config.parser = parser.parse_message
         super().__init__(config, specification, calls)
