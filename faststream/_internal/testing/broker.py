@@ -8,6 +8,7 @@ from typing import (
     Any,
     Generic,
     Optional,
+    Protocol,
     TypeVar,
 )
 from unittest import mock
@@ -22,18 +23,20 @@ from faststream._internal.utils.functions import FakeContext
 if TYPE_CHECKING:
     from types import TracebackType
 
-    from faststream._internal.configs import BrokerConfig
     from faststream._internal.endpoint.subscriber import SubscriberUsecase
-    from faststream._internal.producer import ProducerProto
 
 
 Broker = TypeVar("Broker", bound=BrokerUsecase[Any, Any])
 
 
+class _ProducerContains(Protocol):
+    producer: Any
+
+
 @contextmanager
 def change_producer(
-    config: "BrokerConfig",
-    producer: "ProducerProto[Any]",
+    config: _ProducerContains,
+    producer: Any,
 ) -> Generator[None, None, None]:
     old_producer, config.producer = config.producer, producer
     yield

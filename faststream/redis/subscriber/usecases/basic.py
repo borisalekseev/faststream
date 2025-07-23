@@ -59,6 +59,7 @@ class LogicSubscriber(TasksMixin, SubscriberUsecase[UnifyRedisDict]):
             RedisFakePublisher(
                 self._outer_config.producer,
                 channel=message.reply_to,
+                message_format=self.config.message_format,
             ),
         )
 

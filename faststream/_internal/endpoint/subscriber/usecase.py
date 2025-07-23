@@ -15,8 +15,9 @@ from typing import (
 from typing_extensions import Self, deprecated, overload, override
 
 from faststream._internal.endpoint.usecase import Endpoint
-from faststream._internal.endpoint.utils import resolve_custom_func
+from faststream._internal.endpoint.utils import ParserComposition
 from faststream._internal.types import (
+    AsyncCallable,
     MsgType,
     P_HandlerParams,
     T_HandlerReturn,
@@ -118,12 +119,12 @@ class SubscriberUsecase(Endpoint, Generic[MsgType]):
     def _build_fastdepends_model(self) -> None:
         for call in self.calls:
             if parser := call.item_parser or self._outer_config.broker_parser:
-                async_parser = resolve_custom_func(parser, self._parser)
+                async_parser: AsyncCallable = ParserComposition(parser, self._parser)
             else:
                 async_parser = self._parser
 
             if decoder := call.item_decoder or self._outer_config.broker_decoder:
-                async_decoder = resolve_custom_func(decoder, self._decoder)
+                async_decoder: AsyncCallable = ParserComposition(decoder, self._decoder)
             else:
                 async_decoder = self._decoder
 

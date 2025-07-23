@@ -34,7 +34,7 @@ class TestCustomParser(RedisTestcaseConfig, CustomParserTestcase):
         pytest.param(
             b"\x82\xa2id\xd9",
             b"\x82\xa2id\xd9",
-            id="UTF-8 incompitable bytes",
+            id="UTF-8 incompatible bytes",
         ),
     ),
 )
@@ -233,6 +233,26 @@ class TestFormats:
             )
         mock.assert_called_once_with(b"hello world")
 
+    @pytest.mark.filterwarnings("ignore:JSONMessageFormat has been deprecated")
+    async def test_parse_response_with_publisher_format(self, queue: str) -> None:
+        broker = RedisBroker(
+            apply_types=False,
+            # message_format will be ignored
+            message_format=None,  # type: ignore[arg-type]
+        )
+
+        @broker.subscriber(queue, message_format=JSONMessageFormat)
+        async def resp(msg):
+            return "Response"
+
+        publisher = broker.publisher(queue, message_format=JSONMessageFormat)
+
+        async with broker:
+            await broker.start()
+
+            response = await publisher.request("Hi!")
+            assert response.body == b"Response"
+
 
 @pytest.mark.asyncio()
 class TestTestBrokerFormats:
@@ -264,7 +284,7 @@ class TestTestBrokerFormats:
         broker = RedisBroker(apply_types=False, message_format=JSONMessageFormat)
 
         @broker.subscriber(queue, message_format=BinaryMessageFormatV1)
-        async def handler(msg): ...
+        async def handler(msg) -> None: ...
 
         async with TestRedisBroker(broker) as br:
             await br.publish("hello", queue)

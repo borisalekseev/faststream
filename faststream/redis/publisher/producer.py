@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, Optional, cast
 import anyio
 from typing_extensions import override
 
-from faststream._internal.endpoint.utils import resolve_custom_func
+from faststream._internal.endpoint.utils import ParserComposition
 from faststream._internal.producer import ProducerProto
 from faststream._internal.utils.nuid import NUID
 from faststream.redis.message import DATA_KEY
@@ -13,7 +13,7 @@ from faststream.redis.response import DestinationType, RedisPublishCommand
 if TYPE_CHECKING:
     from fast_depends.library.serializer import SerializerProto
 
-    from faststream._internal.types import AsyncCallable, CustomCallable
+    from faststream._internal.types import CustomCallable
     from faststream.redis.configs import ConnectionState
     from faststream.redis.parser import MessageFormat
 
@@ -21,8 +21,8 @@ if TYPE_CHECKING:
 class RedisFastProducer(ProducerProto[RedisPublishCommand]):
     """A class to represent a Redis producer."""
 
-    _decoder: "AsyncCallable"
-    _parser: "AsyncCallable"
+    _decoder: "ParserComposition"
+    _parser: "ParserComposition"
 
     def __init__(
         self,
@@ -35,11 +35,11 @@ class RedisFastProducer(ProducerProto[RedisPublishCommand]):
         self.serializer: SerializerProto | None = None
 
         default = RedisPubSubParser(SimpleParserConfig(message_format))
-        self._parser = resolve_custom_func(
+        self._parser = ParserComposition(
             parser,
             default.parse_message,
         )
-        self._decoder = resolve_custom_func(
+        self._decoder = ParserComposition(
             decoder,
             default.decode_message,
         )

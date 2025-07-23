@@ -14,7 +14,7 @@ from unittest.mock import AsyncMock, MagicMock
 import anyio
 from typing_extensions import TypedDict, override
 
-from faststream._internal.endpoint.utils import resolve_custom_func
+from faststream._internal.endpoint.utils import ParserComposition
 from faststream._internal.testing.broker import TestBroker, change_producer
 from faststream.exceptions import SetupError, SubscriberNotFound
 from faststream.message import gen_cor_id
@@ -27,7 +27,7 @@ from faststream.redis.message import (
     PubSubMessage,
     bDATA_KEY,
 )
-from faststream.redis.parser import MessageFormat, RedisPubSubParser
+from faststream.redis.parser import MessageFormat, ParserConfig, RedisPubSubParser
 from faststream.redis.publisher.producer import RedisFastProducer
 from faststream.redis.response import DestinationType, RedisPublishCommand
 from faststream.redis.schemas import INCORRECT_SETUP_MSG
@@ -50,12 +50,18 @@ class TestRedisBroker(TestBroker[RedisBroker]):
 
     @contextmanager
     def _patch_producer(self, broker: RedisBroker) -> Iterator[None]:
-        fake_producer = FakeProducer(broker)
-
         with ExitStack() as es:
             es.enter_context(
-                change_producer(broker.config.broker_config, fake_producer),
+                change_producer(
+                    broker.config.broker_config, FakeProducer(broker, broker.config)
+                ),
             )
+
+            for publisher in cast("list[LogicPublisher]", broker.publishers):
+                es.enter_context(
+                    change_producer(publisher, FakeProducer(broker, publisher.config)),
+                )
+
             yield
 
     @staticmethod
@@ -106,15 +112,16 @@ class TestRedisBroker(TestBroker[RedisBroker]):
 
 
 class FakeProducer(RedisFastProducer):
-    def __init__(self, broker: RedisBroker) -> None:
+    def __init__(self, broker: RedisBroker, config: ParserConfig) -> None:
         self.broker = broker
 
-        default = RedisPubSubParser(broker.config)
-        self._parser = resolve_custom_func(
+        default = RedisPubSubParser(config)
+
+        self._parser = ParserComposition(
             broker._parser,
             default.parse_message,
         )
-        self._decoder = resolve_custom_func(
+        self._decoder = ParserComposition(
             broker._decoder,
             default.decode_message,
         )

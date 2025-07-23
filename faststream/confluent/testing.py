@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, MagicMock
 import anyio
 from typing_extensions import override
 
-from faststream._internal.endpoint.utils import resolve_custom_func
+from faststream._internal.endpoint.utils import ParserComposition
 from faststream._internal.testing.broker import TestBroker, change_producer
 from faststream.confluent.broker import KafkaBroker
 from faststream.confluent.parser import AsyncConfluentParser
@@ -104,8 +104,8 @@ class FakeProducer(AsyncConfluentFastProducer):
         self.broker = broker
 
         default = AsyncConfluentParser()
-        self._parser = resolve_custom_func(broker._parser, default.parse_message)
-        self._decoder = resolve_custom_func(broker._decoder, default.decode_message)
+        self._parser = ParserComposition(broker._parser, default.parse_message)
+        self._decoder = ParserComposition(broker._decoder, default.decode_message)
 
     def __bool__(self) -> bool:
         return True
