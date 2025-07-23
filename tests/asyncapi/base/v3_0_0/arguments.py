@@ -48,9 +48,7 @@ class FastAPICompatible(AsyncAPI300Factory):
 
         assert next(iter(schema["operations"].keys())) == ".Subscribe"
 
-        assert (
-            next(iter(schema["components"]["messages"].keys())) == ".:SubscribeMessage"
-        )
+        assert next(iter(schema["components"]["messages"].keys())) == ".:SubscribeMessage"
         assert (
             schema["components"]["messages"][".:SubscribeMessage"]["title"]
             == "/:SubscribeMessage"
@@ -444,9 +442,7 @@ class FastAPICompatible(AsyncAPI300Factory):
 
         assert (
             len(
-                next(iter(schema["components"]["messages"].values()))["payload"][
-                    "oneOf"
-                ],
+                next(iter(schema["components"]["messages"].values()))["payload"]["oneOf"],
             )
             == 2
         )

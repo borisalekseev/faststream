@@ -33,10 +33,7 @@ class AdminService:
 
     def create_topics(self, topics: list[str]) -> list[CreateResult]:
         create_result = self.client.create_topics(
-            [
-                NewTopic(topic, num_partitions=1, replication_factor=1)
-                for topic in topics
-            ],
+            [NewTopic(topic, num_partitions=1, replication_factor=1) for topic in topics],
         )
 
         final_results = []

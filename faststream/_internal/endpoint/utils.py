@@ -69,9 +69,7 @@ class ParserComposition:
 
             else:
                 name = tuple(original_params.items())[1][0]
-                self.wrapped_func = partial(
-                    to_async(custom_func), **{name: default_func}
-                )
+                self.wrapped_func = partial(to_async(custom_func), **{name: default_func})
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         return self.wrapped_func(*args, **kwargs)

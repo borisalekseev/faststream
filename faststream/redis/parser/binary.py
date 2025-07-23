@@ -20,9 +20,7 @@ class FastStreamMessageVersion(int, enum.Enum):
 class BinaryMessageFormatV1(MessageFormat):
     """Message format to encode into binary and parse it."""
 
-    IDENTITY_HEADER = (
-        b"\x89BIN\x0d\x0a\x1a\x0a"  # to avoid confusion with other formats
-    )
+    IDENTITY_HEADER = b"\x89BIN\x0d\x0a\x1a\x0a"  # to avoid confusion with other formats
 
     @classmethod
     def encode(

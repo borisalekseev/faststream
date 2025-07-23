@@ -105,9 +105,7 @@ class CompressionType(str, Enum):
 
 class ClientDNSLookup(str, Enum):
     use_all_dns_ips = "use_all_dns_ips"
-    resolve_canonical_bootstrap_servers_only = (
-        "resolve_canonical_bootstrap_servers_only"
-    )
+    resolve_canonical_bootstrap_servers_only = "resolve_canonical_bootstrap_servers_only"
 
 
 _SharedConfig = {
@@ -384,8 +382,7 @@ class ConfluentFastConfig:
     @property
     def admin_config(self) -> "AnyDict":
         return _to_confluent(
-            {_AdminConfig[k]: v for k, v in self.raw_admin_config.items()}
-            | self.config,
+            {_AdminConfig[k]: v for k, v in self.raw_admin_config.items()} | self.config,
         )
 
 

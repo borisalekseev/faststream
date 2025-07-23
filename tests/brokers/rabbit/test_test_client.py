@@ -335,6 +335,5 @@ def test_in_memory_routing(
 ) -> None:
     subscriber = broker.subscriber(queue, exchange)
     assert (
-        _is_handler_matches(subscriber, routing_key, headers, exchange)
-        is expected_result
+        _is_handler_matches(subscriber, routing_key, headers, exchange) is expected_result
     )

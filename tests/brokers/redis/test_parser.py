@@ -224,9 +224,7 @@ class TestFormats:
 
             await asyncio.wait(
                 (
-                    asyncio.create_task(
-                        broker._connection.publish(queue, "hello world")
-                    ),
+                    asyncio.create_task(broker._connection.publish(queue, "hello world")),
                     asyncio.create_task(event.wait()),
                 ),
                 timeout=3,

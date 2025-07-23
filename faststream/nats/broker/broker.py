@@ -730,9 +730,7 @@ class NatsBroker(
             _publish_type=PublishType.REQUEST,
         )
 
-        producer = (
-            self.config.js_producer if stream is not None else self.config.producer
-        )
+        producer = self.config.js_producer if stream is not None else self.config.producer
 
         msg: NatsMessage = await super()._basic_request(cmd, producer=producer)
         return msg

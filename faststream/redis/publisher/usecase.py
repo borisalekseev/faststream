@@ -120,9 +120,7 @@ class ChannelPublisher(LogicPublisher):
         _extra_middlewares: Iterable["PublisherMiddleware"],
     ) -> None:
         """This method should be called in subscriber flow only."""
-        cmd = RedisPublishCommand.from_cmd(
-            cmd, message_format=self.config.message_format
-        )
+        cmd = RedisPublishCommand.from_cmd(cmd, message_format=self.config.message_format)
 
         cmd.set_destination(channel=self.channel.name)
 
@@ -223,9 +221,7 @@ class ListPublisher(LogicPublisher):
         _extra_middlewares: Iterable["PublisherMiddleware"],
     ) -> None:
         """This method should be called in subscriber flow only."""
-        cmd = RedisPublishCommand.from_cmd(
-            cmd, message_format=self.config.message_format
-        )
+        cmd = RedisPublishCommand.from_cmd(cmd, message_format=self.config.message_format)
 
         cmd.set_destination(list=self.list.name)
 
@@ -380,9 +376,7 @@ class StreamPublisher(LogicPublisher):
         _extra_middlewares: Iterable["PublisherMiddleware"],
     ) -> None:
         """This method should be called in subscriber flow only."""
-        cmd = RedisPublishCommand.from_cmd(
-            cmd, message_format=self.config.message_format
-        )
+        cmd = RedisPublishCommand.from_cmd(cmd, message_format=self.config.message_format)
 
         cmd.set_destination(stream=self.stream.name)
 

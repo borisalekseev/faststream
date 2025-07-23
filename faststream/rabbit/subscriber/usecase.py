@@ -176,8 +176,7 @@ class RabbitSubscriber(SubscriberUsecase["IncomingMessage"]):
                 msg: RabbitMessage = await process_msg(  # type: ignore[assignment]
                     msg=raw_message,
                     middlewares=(
-                        m(raw_message, context=context)
-                        for m in self._broker_middlewares
+                        m(raw_message, context=context) for m in self._broker_middlewares
                     ),
                     parser=self._parser,
                     decoder=self._decoder,

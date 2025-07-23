@@ -106,9 +106,7 @@ class RedisBatchListParser(SimpleParser):
         batch_headers: list[AnyDict] = []
 
         for x in message["data"]:
-            msg_data, msg_headers = _decode_batch_body_item(
-                x, self.config.message_format
-            )
+            msg_data, msg_headers = _decode_batch_body_item(x, self.config.message_format)
             body.append(msg_data)
             batch_headers.append(msg_headers)
 

@@ -73,9 +73,9 @@ class ObjStoreWatchSubscriber(
                 include_history=self.obj_watch.include_history,
                 meta_only=self.obj_watch.meta_only,
             )
-            fetch_sub = self._fetch_sub = UnsubscribeAdapter[
-                "ObjectStore.ObjectWatcher"
-            ](obj_watch)
+            fetch_sub = self._fetch_sub = UnsubscribeAdapter["ObjectStore.ObjectWatcher"](
+                obj_watch
+            )
         else:
             fetch_sub = self._fetch_sub
 
@@ -116,9 +116,9 @@ class ObjStoreWatchSubscriber(
                 include_history=self.obj_watch.include_history,
                 meta_only=self.obj_watch.meta_only,
             )
-            fetch_sub = self._fetch_sub = UnsubscribeAdapter[
-                "ObjectStore.ObjectWatcher"
-            ](obj_watch)
+            fetch_sub = self._fetch_sub = UnsubscribeAdapter["ObjectStore.ObjectWatcher"](
+                obj_watch
+            )
         else:
             fetch_sub = self._fetch_sub
 

@@ -399,9 +399,7 @@ class SubscriberUsecase(Endpoint, Generic[MsgType]):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_one(
-        self, *, timeout: float = 5
-    ) -> Optional["StreamMessage[MsgType]"]:
+    async def get_one(self, *, timeout: float = 5) -> Optional["StreamMessage[MsgType]"]:
         raise NotImplementedError
 
     @abstractmethod

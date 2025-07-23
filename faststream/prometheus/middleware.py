@@ -176,8 +176,8 @@ class BasePrometheusMiddleware(
         if self._settings_provider is None or cmd.publish_type is PublishType.REPLY:
             return await call_next(cmd)
 
-        destination_name = (
-            self._settings_provider.get_publish_destination_name_from_cmd(cmd)
+        destination_name = self._settings_provider.get_publish_destination_name_from_cmd(
+            cmd
         )
         messaging_system = self._settings_provider.messaging_system
 

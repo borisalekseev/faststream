@@ -133,9 +133,7 @@ class FakeProducer(AsyncConfluentFastProducer):
             cmd.destination,
             cmd.partition,
         ):
-            msg_to_send = (
-                [incoming] if isinstance(handler, BatchSubscriber) else incoming
-            )
+            msg_to_send = [incoming] if isinstance(handler, BatchSubscriber) else incoming
 
             await self._execute_handler(msg_to_send, cmd.destination, handler)
 
@@ -186,9 +184,7 @@ class FakeProducer(AsyncConfluentFastProducer):
             cmd.destination,
             cmd.partition,
         ):
-            msg_to_send = (
-                [incoming] if isinstance(handler, BatchSubscriber) else incoming
-            )
+            msg_to_send = [incoming] if isinstance(handler, BatchSubscriber) else incoming
 
             with anyio.fail_after(cmd.timeout):
                 return await self._execute_handler(

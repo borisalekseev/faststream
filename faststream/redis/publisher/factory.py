@@ -92,9 +92,7 @@ def create_publisher(
         return StreamPublisher(publisher_config, specification, stream=stream_sub)
 
     if list_sub := ListSub.validate(list):
-        specification = ListPublisherSpecification(
-            config, specification_config, list_sub
-        )
+        specification = ListPublisherSpecification(config, specification_config, list_sub)
 
         if list_sub.batch:
             return ListBatchPublisher(publisher_config, specification, list=list_sub)

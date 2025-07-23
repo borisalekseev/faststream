@@ -117,8 +117,7 @@ def create_subscriber(
     if stream:
         # Both JS Subscribers
         extra_options: AnyDict = {
-            "pending_msgs_limit": pending_msgs_limit
-            or DEFAULT_JS_SUB_PENDING_MSGS_LIMIT,
+            "pending_msgs_limit": pending_msgs_limit or DEFAULT_JS_SUB_PENDING_MSGS_LIMIT,
             "pending_bytes_limit": pending_bytes_limit
             or DEFAULT_JS_SUB_PENDING_BYTES_LIMIT,
             "durable": durable,
@@ -152,8 +151,7 @@ def create_subscriber(
         # Core Subscriber
         extra_options = {
             "pending_msgs_limit": pending_msgs_limit or DEFAULT_SUB_PENDING_MSGS_LIMIT,
-            "pending_bytes_limit": pending_bytes_limit
-            or DEFAULT_SUB_PENDING_BYTES_LIMIT,
+            "pending_bytes_limit": pending_bytes_limit or DEFAULT_SUB_PENDING_BYTES_LIMIT,
             "max_msgs": max_msgs,
         }
 
@@ -349,9 +347,7 @@ def _validate_input_for_misconfigure(  # noqa: PLR0915
         raise SetupError(msg)
 
     if kv_watch and obj_watch:
-        msg = (
-            "You can't use both the `kv_watch` and `obj_watch` options simultaneously."
-        )
+        msg = "You can't use both the `kv_watch` and `obj_watch` options simultaneously."
         raise SetupError(msg)
 
     if pull_sub and not stream:
