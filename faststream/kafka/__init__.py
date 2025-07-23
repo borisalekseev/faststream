@@ -1,7 +1,7 @@
 from faststream._internal.testing.app import TestApp
 
 try:
-    from aiokafka import TopicPartition
+    from aiokafka import ConsumerRecord, RecordMetadata, TopicPartition
 
     from .annotations import KafkaMessage
     from .broker import KafkaBroker, KafkaPublisher, KafkaRoute, KafkaRouter
@@ -17,6 +17,7 @@ except ImportError as e:
     raise ImportError(INSTALL_FASTSTREAM_KAFKA) from e
 
 __all__ = (
+    "ConsumerRecord",
     "KafkaBroker",
     "KafkaMessage",
     "KafkaPublishCommand",
@@ -24,6 +25,7 @@ __all__ = (
     "KafkaResponse",
     "KafkaRoute",
     "KafkaRouter",
+    "RecordMetadata",
     "TestApp",
     "TestKafkaBroker",
     "TopicPartition",
