@@ -237,6 +237,7 @@ class SubscriberUsecase(Endpoint, Generic[MsgType]):
             func: Callable[P_HandlerParams, T_HandlerReturn],
         ) -> "HandlerCallWrapper[P_HandlerParams, T_HandlerReturn]":
             handler = super(SubscriberUsecase, self).__call__(func)
+            handler._subscribers.append(self)
 
             self.calls.add_call(
                 HandlerItem[MsgType](

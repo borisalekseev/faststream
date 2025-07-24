@@ -3,14 +3,7 @@ from abc import abstractmethod
 from collections.abc import AsyncGenerator, Generator, Iterator
 from contextlib import AbstractContextManager, asynccontextmanager, contextmanager
 from functools import partial
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Generic,
-    Optional,
-    Protocol,
-    TypeVar,
-)
+from typing import TYPE_CHECKING, Any, Generic, Optional, Protocol, TypeVar
 from unittest import mock
 from unittest.mock import MagicMock
 
@@ -211,9 +204,6 @@ class TestBroker(Generic[Broker]):
             if getattr(p, "_fake_handler", None):
                 p.reset_test()
 
-        self.broker._subscribers = [
-            sub for sub in self.broker._subscribers if sub not in self._fake_subscribers
-        ]
         self._fake_subscribers.clear()
 
         for sub in broker.subscribers:

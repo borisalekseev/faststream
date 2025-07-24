@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from faststream._internal.basic_types import Decorator
     from faststream._internal.di import FastDependsConfig
     from faststream._internal.endpoint.publisher import PublisherProto
+    from faststream._internal.endpoint.subscriber import SubscriberUsecase
     from faststream.message import StreamMessage
 
 
@@ -41,11 +42,17 @@ class HandlerCallWrapper(Generic[P_HandlerParams, T_HandlerReturn]):
 
     _wrapped_call: Callable[..., Awaitable[Any]] | None
     _original_call: Callable[P_HandlerParams, T_HandlerReturn]
+
     _publishers: list["PublisherProto[Any]"]
+
+    # we have to store subscribers here
+    # to protect them from garbage collection
+    _subscribers: list["SubscriberUsecase[Any]"]
 
     __slots__ = (
         "_original_call",
         "_publishers",
+        "_subscribers",
         "_wrapped_call",
         "future",
         "is_test",
@@ -59,7 +66,9 @@ class HandlerCallWrapper(Generic[P_HandlerParams, T_HandlerReturn]):
         """Initialize a handler."""
         self._original_call = call
         self._wrapped_call = None
+
         self._publishers = []
+        self._subscribers = []
 
         self.mock = None
         self.future = None

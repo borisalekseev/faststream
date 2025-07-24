@@ -49,7 +49,7 @@ def test_custom() -> None:
         specification_url="amqp://guest:guest@127.0.0.1:5672/vh",
     )
 
-    broker.publisher("test")
+    pub = broker.publisher("test")  # noqa: F841
     schema = get_2_6_0_schema(broker)
 
     assert schema == {

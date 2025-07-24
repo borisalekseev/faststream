@@ -541,19 +541,19 @@ class RouterTestcase(
 
             assert event.is_set()
 
-    async def test_correct_include_router_with_same_name(self) -> None:
+    async def test_include_passes_producer_to_router(self) -> None:
         pub_broker = self.get_broker()
 
         router1 = self.get_router()
         router2 = self.get_router()
 
-        router1.publisher("l3")
-        router2.publisher("l3")
+        pub1 = router1.publisher("l3")
+        pub2 = router2.publisher("l3")
+
+        assert pub1._outer_config.producer is not pub2._outer_config.producer
 
         pub_broker.include_routers(router2, router1)
 
-        pub1 = router1.publishers[0]
-        pub2 = router2.publishers[0]
         assert pub1._outer_config.producer is pub2._outer_config.producer
 
 

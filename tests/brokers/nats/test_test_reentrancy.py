@@ -1,8 +1,8 @@
 import pytest
 
-from faststream.rabbit import RabbitBroker, TestRabbitBroker
+from faststream.nats import NatsBroker, TestNatsBroker
 
-broker = RabbitBroker()
+broker = NatsBroker()
 
 
 to_output_data = broker.publisher("output_data")
@@ -20,7 +20,7 @@ async def on_output_data(msg: int) -> None:
 
 
 async def _test_with_broker(with_real: bool) -> None:
-    async with TestRabbitBroker(broker, with_real=with_real) as tester:
+    async with TestNatsBroker(broker, with_real=with_real) as tester:
         await tester.publish(1, "input_data")
 
         await on_output_data.wait_call(3)
@@ -37,7 +37,7 @@ async def test_with_fake_broker() -> None:
 
 
 @pytest.mark.asyncio()
-@pytest.mark.rabbit()
+@pytest.mark.nats()
 async def test_with_real_broker() -> None:
     await _test_with_broker(True)
     await _test_with_broker(True)
@@ -48,7 +48,7 @@ async def _test_with_temp_subscriber() -> None:
     async def on_output_data(msg: int) -> None:
         pass
 
-    async with TestRabbitBroker(broker) as tester:
+    async with TestNatsBroker(broker) as tester:
         await tester.publish(1, "input_data")
 
         await on_output_data.wait_call(3)

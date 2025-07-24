@@ -697,7 +697,7 @@ class TestConsumeStream(RedisTestcaseConfig):
         )
         async def handler(msg: RedisMessage) -> None: ...
 
-        assert next(iter(consume_broker._subscribers)).last_id == ">"
+        assert next(iter(consume_broker.subscribers)).last_id == ">"
 
     async def test_consume_group_with_last_id(
         self,
@@ -710,7 +710,7 @@ class TestConsumeStream(RedisTestcaseConfig):
         )
         async def handler(msg: RedisMessage) -> None: ...
 
-        assert next(iter(consume_broker._subscribers)).last_id == "0"
+        assert next(iter(consume_broker.subscribers)).last_id == "0"
 
     async def test_consume_nack(
         self,

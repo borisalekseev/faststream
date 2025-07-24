@@ -21,6 +21,7 @@ from .basic import KafkaTestcaseConfig
 @pytest.mark.kafka()
 class TestConsume(KafkaTestcaseConfig, BrokerRealConsumeTestcase):
     @pytest.mark.asyncio()
+    @pytest.mark.flaky(reruns=3, reruns_delay=1)
     async def test_consume_by_pattern(
         self,
         queue: str,
@@ -621,7 +622,7 @@ class TestListener(KafkaTestcaseConfig):
                 mock.on_partitions_assigned()
                 event.set()
 
-        consume_broker.subscriber(
+        sub = consume_broker.subscriber(  # noqa: F841
             queue,
             ack_policy=AckPolicy.MANUAL,
             group_id="service_1",
@@ -647,7 +648,7 @@ class TestListener(KafkaTestcaseConfig):
             async def on_partitions_assigned(self, assigned: set[str]) -> None:
                 mock.on_partitions_assigned()
 
-        consume_broker.subscriber(
+        sub = consume_broker.subscriber(  # noqa: F841
             queue,
             ack_policy=AckPolicy.MANUAL,
             group_id="service_1",

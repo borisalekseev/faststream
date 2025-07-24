@@ -37,7 +37,7 @@ async def test_correct_config_merging(queue: str) -> None:
 
         assert producer_config == expected_config
 
-        subscriber_config = broker._subscribers[0].consumer.config
+        subscriber_config = broker.subscribers[0].consumer.config
 
         assert subscriber_config == expected_config
 
