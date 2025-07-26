@@ -1,6 +1,6 @@
-import pytest
-
 from typing import Any
+
+import pytest
 
 from faststream.nats import NatsBroker, TestNatsBroker
 from tests.asgi.testcase import AsgiTestcase

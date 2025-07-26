@@ -1,6 +1,6 @@
-import pytest
-
 import ssl
+
+import pytest
 
 from faststream.rabbit import RabbitBroker
 from faststream.security import (

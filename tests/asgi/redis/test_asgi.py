@@ -1,6 +1,6 @@
-import pytest
-
 from typing import Any
+
+import pytest
 
 from faststream.redis import RedisBroker, TestRedisBroker
 from tests.asgi.testcase import AsgiTestcase

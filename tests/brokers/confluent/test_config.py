@@ -1,6 +1,6 @@
-import pytest
-
 from unittest.mock import MagicMock
+
+import pytest
 
 from faststream import AckPolicy
 from faststream.confluent.subscriber.config import KafkaSubscriberConfig

@@ -1,6 +1,6 @@
-import pytest
-
 from typing import Any
+
+import pytest
 
 from faststream._internal.broker import BrokerUsecase
 from faststream.confluent.fastapi import KafkaRouter

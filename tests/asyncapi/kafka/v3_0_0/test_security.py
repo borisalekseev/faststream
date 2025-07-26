@@ -1,7 +1,7 @@
-import pytest
-
 import ssl
 from copy import deepcopy
+
+import pytest
 
 from faststream.kafka import KafkaBroker
 from faststream.security import (

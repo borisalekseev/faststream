@@ -199,8 +199,8 @@ markers = [
     "nats",
     "redis",
     "slow",
-    "all",
     "connected",
+    "all",
 ]
 asyncio_default_fixture_loop_scope = "function"
 

@@ -36,7 +36,7 @@ down:
 [doc("Run fast tests")]
 [group("tests")]
 test +param="tests/":
-  docker compose exec faststream uv run pytest {{param}} -m "not slow and not kafka and not confluent and not redis and not rabbit and not nats"
+  docker compose exec faststream uv run pytest {{param}} -m "not slow and not connected"
 
 [doc("Run all tests")]
 [group("tests")]
@@ -46,7 +46,7 @@ test-all +param="tests/":
 [doc("Run fast tests with coverage")]
 [group("tests")]
 test-coverage +param="tests/":
-  -docker compose exec faststream uv run sh -c "coverage run -m pytest {{param}} -m 'not slow and not kafka and not confluent and not redis and not rabbit and not nats' && coverage combine && coverage report --show-missing --skip-covered --sort=cover --precision=2 && rm .coverage*"
+  -docker compose exec faststream uv run sh -c "coverage run -m pytest {{param}} -m 'not slow and not connected' && coverage combine && coverage report --show-missing --skip-covered --sort=cover --precision=2 && rm .coverage*"
 
 [doc("Run all tests with coverage")]
 [group("tests")]

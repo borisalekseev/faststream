@@ -1,6 +1,6 @@
-import pytest
-
 import ssl
+
+import pytest
 
 from faststream.redis import RedisBroker
 from faststream.security import (

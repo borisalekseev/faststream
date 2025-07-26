@@ -1,5 +1,4 @@
 import pytest
-
 from dirty_equals import IsPartialDict
 
 from faststream.kafka import KafkaBroker

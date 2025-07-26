@@ -1,7 +1,6 @@
-import pytest
-
 from typing import Any
 
+import pytest
 from dirty_equals import IsPartialDict
 
 from faststream._internal.broker import BrokerUsecase

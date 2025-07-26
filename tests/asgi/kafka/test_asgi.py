@@ -1,6 +1,6 @@
-import pytest
-
 from typing import Any
+
+import pytest
 
 from faststream.kafka import KafkaBroker, TestKafkaBroker
 from tests.asgi.testcase import AsgiTestcase

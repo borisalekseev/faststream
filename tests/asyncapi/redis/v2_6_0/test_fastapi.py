@@ -1,6 +1,6 @@
-import pytest
-
 from typing import Any
+
+import pytest
 
 from faststream._internal.broker import BrokerUsecase
 from faststream.redis import TestRedisBroker

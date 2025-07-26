@@ -1,6 +1,6 @@
-import pytest
-
 from unittest.mock import MagicMock
+
+import pytest
 
 from faststream import AckPolicy
 from faststream.rabbit.subscriber.config import RabbitSubscriberConfig
