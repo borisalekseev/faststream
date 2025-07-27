@@ -154,12 +154,14 @@ kafka-logs:
 [doc("Run kafka tests")]
 [group("kafka")]
 [group("tests")]
-test-kafka: (test "tests/brokers/kafka")
+test-kafka +param="tests/":
+  docker compose exec faststream uv run pytest {{param}} -m "kafka"
 
 [doc("Run confluent tests")]
 [group("kafka")]
 [group("tests")]
-test-confluent: (test "tests/brokers/confluent")
+test-confluent +param="tests/":
+  docker compose exec faststream uv run pytest {{param}} -m "confluent"
 
 
 # RabbitMQ
@@ -181,7 +183,8 @@ rabbit-logs:
 [doc("Run rabbitmq tests")]
 [group("rabbitmq")]
 [group("tests")]
-test-rabbit: (test "tests/brokers/rabbit")
+test-rabbit +param="tests/":
+  docker compose exec faststream uv run pytest {{param}} -m "rabbit"
 
 
 # Redis
@@ -203,7 +206,8 @@ redis-logs:
 [doc("Run redis tests")]
 [group("redis")]
 [group("tests")]
-test-redis: (test "tests/brokers/redis")
+test-redis +param="tests/":
+  docker compose exec faststream uv run pytest {{param}} -m "redis"
 
 
 # Nats
@@ -225,4 +229,5 @@ nats-logs:
 [doc("Run nats tests")]
 [group("nats")]
 [group("tests")]
-test-nats: (test "tests/brokers/nats")
+test-nats +param="tests/":
+  docker compose exec faststream uv run pytest {{param}} -m "nats"
