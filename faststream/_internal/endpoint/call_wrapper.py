@@ -37,7 +37,6 @@ class HandlerCallWrapper(Generic[P_HandlerParams, T_HandlerReturn]):
     """A generic class to wrap handler calls."""
 
     future: Optional["asyncio.Future[Any]"]
-
     _wrapped_call: Callable[..., Awaitable[Any]] | None
     _original_call: Callable[P_HandlerParams, T_HandlerReturn]
 
