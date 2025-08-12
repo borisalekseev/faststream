@@ -20,7 +20,11 @@ Options:
 ```
 { data-search-exclude }
 
-You can provide a raw message along with any broker-specific options if needed:
+You can provide a raw message along with any broker-specific options if needed.
+
+```python
+
+```
 
 ```shell
 faststream publish main:app '{"name": "John"}' --channel 'my-topic'

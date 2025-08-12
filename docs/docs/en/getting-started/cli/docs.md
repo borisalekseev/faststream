@@ -22,4 +22,14 @@ Commands:
 ```
 { data-search-exclude }
 
+To serve the documentation, create a simple app in the `main.py` file:
+
+{! includes/en/simple-apps.md !}
+
+Then run the following command:
+
+```shell
+faststream docs serve main:app
+```
+
 To learn more about the commands above, please visit [**AsyncAPI export**](../asyncapi/export.md){.internal-link} and [**AsyncAPI hosting**](../asyncapi/hosting.md){.internal-link}.

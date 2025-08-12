@@ -38,6 +38,21 @@ uvicorn main:app
 
 It does nothing but launch the app itself as an **ASGI lifespan**.
 
+!!! note
+    You are able to use something else than `uvicorn`.
+    ```shell
+    faststream run main:app --workers 4
+    ```
+    ```shell
+    gunicorn -k uvicorn.workers.UvicornWorker main:app --workers=4
+    ```
+    ```shell
+    granian --interface asgi main:app --workers 4
+    ```
+    ```shell
+    hypercorn main:app --workers 4
+    ```
+
 
 ### ASGI Routes
 
