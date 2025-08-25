@@ -101,6 +101,8 @@ class AsgiFastStream(Application):
         specification: Optional["SpecificationFactory"] = None,
         asyncapi_path: str | AsyncAPIRoute | None = None,
     ) -> None:
+        self.routes = list(asgi_routes)
+
         super().__init__(
             broker,
             logger=logger,
@@ -116,19 +118,30 @@ class AsgiFastStream(Application):
             specification=specification,
         )
 
-        self.routes = list(asgi_routes)
         if asyncapi_path:
-            route = AsyncAPIRoute.ensure_route(asyncapi_path)
-            self.routes.append((route.path, route(self.schema)))
-
-        for path, app in self.routes:
-            if isinstance(app, HttpHandler):
-                self.schema.add_http_route(path, app)
+            asyncapi_route = AsyncAPIRoute.ensure_route(asyncapi_path)
+            self.routes.append((asyncapi_route.path, asyncapi_route(self.schema)))
+        self.routes = []
+        for route in asgi_routes:
+            self._register_route(route)
 
         self._server = OuterRunState()
 
         self._log_level: int = logging.INFO
         self._run_extra_options: dict[str, SettingField] = {}
+    
+
+    def _init_setupable_(  # noqa: PLW3201
+        self,
+        broker: Optional["BrokerUsecase[Any, Any]"] = None,
+        /,
+        specification: Optional["SpecificationFactory"] = None,
+        config: Optional["FastDependsConfig"] = None,
+    ) -> None:
+        super()._init_setupable_(broker, specification, config)
+        for route in self.routes:
+            self.routes.append(route)
+
 
     @classmethod
     def from_app(
@@ -152,7 +165,14 @@ class AsgiFastStream(Application):
         return asgi_app
 
     def mount(self, path: str, route: "ASGIApp") -> None:
-        self.routes.append((path, route))
+        self._register_route((path, route))
+
+    def _register_route(self, asgi_route: tuple[str, "ASGIApp"]) -> None:
+        self.routes.append(asgi_route)
+        path, route = asgi_route
+        if isinstance(route, HttpHandler):
+            self.schema.add_http_route(path, route)
+            route.set_context(self.config.context)
 
     async def __call__(
         self,
