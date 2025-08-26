@@ -121,15 +121,11 @@ class AsgiFastStream(Application):
         if asyncapi_path:
             asyncapi_route = AsyncAPIRoute.ensure_route(asyncapi_path)
             self.routes.append((asyncapi_route.path, asyncapi_route(self.schema)))
-        self.routes = []
-        for route in asgi_routes:
-            self._register_route(route)
 
         self._server = OuterRunState()
 
         self._log_level: int = logging.INFO
         self._run_extra_options: dict[str, SettingField] = {}
-    
 
     def _init_setupable_(  # noqa: PLW3201
         self,
@@ -140,8 +136,7 @@ class AsgiFastStream(Application):
     ) -> None:
         super()._init_setupable_(broker, specification, config)
         for route in self.routes:
-            self.routes.append(route)
-
+            self._register_route(route)
 
     @classmethod
     def from_app(
@@ -165,14 +160,15 @@ class AsgiFastStream(Application):
         return asgi_app
 
     def mount(self, path: str, route: "ASGIApp") -> None:
-        self._register_route((path, route))
+        asgi_route = (path, route)
+        self.routes.append(asgi_route)
+        self._register_route(asgi_route)
 
     def _register_route(self, asgi_route: tuple[str, "ASGIApp"]) -> None:
-        self.routes.append(asgi_route)
         path, route = asgi_route
         if isinstance(route, HttpHandler):
             self.schema.add_http_route(path, route)
-            route.set_context(self.config.context)
+            route.update_fd_config(self.config)
 
     async def __call__(
         self,

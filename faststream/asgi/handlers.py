@@ -45,12 +45,9 @@ class HttpHandler:
 
         else:
             try:
-                if hasattr(self, "_context_repo"):
-                    with self.fd_config.context.scope(
-                        "request", AsgiRequest(scope, receive, send)
-                    ):
-                        response = await self.func(scope)
-                else:
+                with self.fd_config.context.scope(
+                    "request", AsgiRequest(scope, receive, send)
+                ):
                     response = await self.func(scope)
             except Exception:
                 logger.exception("Exception occurred while processing request")
@@ -60,7 +57,8 @@ class HttpHandler:
 
     def update_fd_config(self, config: FastDependsConfig) -> None:
         self.fd_config = config | self.fd_config
-        self.func = apply_types(self.__original_func, context__=self.fd_config.context)
+        self.fd_config.build_call()
+        self.func = apply_types(to_async(self.__original_func), context__=self.fd_config.context)
 
 
 class GetHandler(HttpHandler):
