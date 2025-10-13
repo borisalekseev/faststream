@@ -84,19 +84,7 @@ app = AsgiFastStream(
 If you want to write your own simple **HTTP**-endpoint, you can use our `#!python @get` or `#!python @post` decorator as in the following example.
 
 ```python linenums="1" hl_lines="2 6-8 12"
-from faststream.nats import NatsBroker
-from faststream.asgi import AsgiFastStream, AsgiResponse, get
-
-broker = NatsBroker()
-
-@get
-async def liveness_ping(scope):
-    return AsgiResponse(b"", status_code=200)
-
-app = AsgiFastStream(
-    broker,
-    asgi_routes=[("/health", liveness_ping)]
-)
+{! docs_src/getting_started/asgi/healthcheck_app.py !}
 ```
 
 !!! tip
@@ -105,10 +93,10 @@ app = AsgiFastStream(
 
 #### Accessing context fields
 
-**HTTP** endpoints can receive arguments from the context, such as **App**, **Logger**, **Context**, or **Request** objects.
+**HTTP** endpoints can receive arguments from the context, such as **App**, **Logger**, [**Context**](./context.md), or **Request** objects.
 
 ```python linenums="1" hl_lines="7 15"
-from faststream.annotations import Logger
+from faststream import Logger
 from faststream.asgi import AsgiFastStream, get, AsgiResponse, Request
 from faststream.nats import NatsBroker
 
