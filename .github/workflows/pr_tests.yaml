@@ -496,8 +496,8 @@ jobs:
         image: eclipse-mosquitto:latest
         ports:
           - 1883:1883
-        volumes:
-          - ./dev/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+        # volumes:
+        #   - ./dev/mosquitto:/mosquitto/config
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
